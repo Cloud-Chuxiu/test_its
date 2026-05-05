@@ -41,7 +41,7 @@ void positionServo(float ref, DJI_t * motor){
 	
 	//死区
 	
-	if(fabs(motor->posPID.fdb - ref) < 0.1)
+	if(fabs(motor->posPID.fdb - ref) < 1)
 	{
 		motor->speedPID.output = 0;
 	}

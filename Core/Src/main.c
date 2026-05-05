@@ -106,21 +106,23 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim8);  // 启动时基
   HAL_TIM_Base_Start_IT(&htim12); // 启动时基
   CANFilterInit(&hcan1);
-  //CANFilterInit(&hcan2);
+
+  CANFilterInit(&hcan2);
+  printf("ready");
   for(int i = 0; i < 8;i++)
   {
     hDJI[i].motorType = M3508;
   }
   DJI_Init();
+
   /* USER CODE END 2 */
- 
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
-    chassis_ctrl(-720);
-    beam_ctrl(360);
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -214,9 +216,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     }
     
   }
-}
-  /* USER CODE END Callback 1 */
 
+  /* USER CODE END Callback 1 */
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.
