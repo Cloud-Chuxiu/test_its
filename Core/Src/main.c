@@ -18,13 +18,17 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "can.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "chassis.h"
+#include "wtr_can.h"
+#include "beam.h"
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -91,17 +95,32 @@ int main(void)
   MX_USART3_UART_Init();
   MX_TIM8_Init();
   MX_TIM12_Init();
+  MX_USART2_UART_Init();
+  MX_TIM2_Init();
+  MX_TIM4_Init();
+  MX_CAN1_Init();
+  MX_CAN2_Init();
   /* USER CODE BEGIN 2 */
   HAL_UART_Receive_IT(&huart3,rxbuffer,6);
   HAL_UART_Receive_IT(&huart1,rxbuffer,6);
+  HAL_TIM_Base_Start_IT(&htim8);  // 启动时基
+  HAL_TIM_Base_Start_IT(&htim12); // 启动时基
+  CANFilterInit(&hcan1);
+  //CANFilterInit(&hcan2);
+  for(int i = 0; i < 8;i++)
+  {
+    hDJI[i].motorType = M3508;
+  }
+  DJI_Init();
   /* USER CODE END 2 */
-
+ 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
-
+    chassis_ctrl(-720);
+    beam_ctrl(360);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -187,9 +206,17 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-  
-  /* USER CODE END Callback 1 */
+  if(htim->Instance == TIM12)
+  {
+    for(int i = 0;i < 5;i++)
+    {
+       hDJI[i].flag = 1 ; 
+    }
+    
+  }
 }
+  /* USER CODE END Callback 1 */
+
 
 /**
   * @brief  This function is executed in case of error occurrence.
