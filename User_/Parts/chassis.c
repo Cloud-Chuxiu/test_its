@@ -43,7 +43,8 @@ void chassis_ctrl(float distance)
     {
         if(hDJI[0].flag == 1)
         {
-            chassis_readpos();
+            //chassis_readpos();
+           // HAL_UART_Transmit_IT(&huart2,"move\n",5);
             chassis_move(distance);
             //printf("%.2f\n",hDJI[0].speedPID.output);
             hDJI[0].flag = 0;

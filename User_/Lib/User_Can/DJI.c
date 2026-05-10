@@ -12,7 +12,8 @@ void DJI_Init(){
         hDJI[i].speedPID.KP = 12;
         hDJI[i].speedPID.KI = 0.2;
         hDJI[i].speedPID.KD = 5;
-        hDJI[i].speedPID.outputMax = 4000;  //speed limit
+        hDJI[i].speedPID.outputMax = 4000
+		;  //speed limit
 
 		//posPID
         hDJI[i].posPID.KP = 100.0f;

@@ -102,6 +102,7 @@ int main(void)
   MX_TIM4_Init();
   MX_CAN1_Init();
   MX_CAN2_Init();
+  MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
   HAL_UART_Receive_IT(&huart3,rxbuffer,6);
   HAL_UART_Receive_IT(&huart1,rxbuffer,6);

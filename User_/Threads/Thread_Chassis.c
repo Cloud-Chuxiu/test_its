@@ -25,9 +25,12 @@ void Chassis_Function(void *argument)
   for(;;)
   {
     //底盘伺服线程 移动指定距离，并且返回坐标
-    chassis_ctrl(360);
+    //chassis_ctrl(2000);
+    //printf("finished\n");
     // chassis_readpos();
-    osDelay(1);
+    //osDelay(2000);
+    //DJI_Init();
+    ///chassis_ctrl(360);
   }
   /* USER CODE END ITS_Function */
 }

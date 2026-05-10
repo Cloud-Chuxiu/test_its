@@ -6,4 +6,10 @@
 #include "State.h"
 #include <stdio.h>
 
+void updown_ctrl(float pos); //зјБъ
+void updown_move(float distance);
+void updown_Init();
+
+
+
 #endif

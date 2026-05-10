@@ -26,11 +26,15 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "Thread_Chassis.h"
+#include "chassis.h"
+#include "Thread_FT.h"
+#include "SCS.h"
+#include "updown.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+uint8_t command[] = { 0xFF, 0xFF, 0x01, 0x09, 0x03, 0x2A, 0x00, 0x08, 0x00, 0x00, 0xE8, 0x03, 0xD5 };
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -114,10 +118,16 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
-  Chassis_Start();
+  //Chassis_Start();
+  //FT_Start();
+  FT_Init();
+  //HAL_UART_Transmit(&huart2,command,13,HAL_MAX_DELAY);
+
   /* Infinite loop */
   for(;;)
   {
+    updown_ctrl(180);
+
 
     osDelay(1);
   }
