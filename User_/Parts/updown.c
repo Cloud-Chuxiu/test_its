@@ -5,7 +5,7 @@
 //齿条初始化
 void updown_Init()
 {
-    hDJI[3].motorType = M3508;
+    hDJI[5].motorType = M3508;
     DJI_Init();
 }
 
@@ -13,11 +13,11 @@ void updown_Init()
 //升降
 void updown_move(float distance)
 {
-    positionServo(distance,&hDJI[3]);
-    CanTransmit_DJI_1234(&hcan1,hDJI[0].speedPID.output,
-    hDJI[1].speedPID.output,
-    hDJI[2].speedPID.output,
-    hDJI[3].speedPID.output);
+    positionServo(distance,&hDJI[5]);
+    CanTransmit_DJI_5678(&hcan2,hDJI[4].speedPID.output,
+    hDJI[5].speedPID.output,
+    hDJI[6].speedPID.output,
+    hDJI[7].speedPID.output);
 }
 
 
@@ -25,25 +25,29 @@ void updown_move(float distance)
 
 void updown_ctrl(float pos) //坐标
 {
-   while(1)
+    hDJI[5].flag = 1;
+    while(1)
     {
-        if(hDJI[3].flag == 1)
+        if(hDJI[5].flag == 1)
         {
             updown_move(pos);
-            //updown_posget();
-            hDJI[3].flag = 0;
+           
+            hDJI[5].flag = 0;
         }
-        if(hDJI[3].speedPID.output == 0)
+        if(hDJI[5].speedPID.output == 0)
         {
+            
+            printf("return\n");
             return;
         }
+    
     }
 }
 
 void updown_posget()
 {
-    crane_xyz.state_z = hDJI[3].AxisData.AxisVelocity;
-    printf("%f\n",crane_xyz.state_z);
+    crane_xyz.state_z = hDJI[5].AxisData.AxisVelocity;
+    printf("%.2f\n",crane_xyz.state_z);
 }
 
 

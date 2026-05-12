@@ -30,6 +30,7 @@
 #include "wtr_can.h"
 #include "beam.h"
 #include <stdio.h>
+#include "updown.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -111,7 +112,6 @@ int main(void)
   //ÅäÖÃcan¹ýÂËÆ÷
   CANFilterInit(&hcan1);
   CANFilterInit(&hcan2);
-  printf("ready");
   for(int i = 0; i < 8;i++)
   {
     hDJI[i].motorType = M3508;
@@ -126,8 +126,9 @@ int main(void)
 
   /* Start scheduler */
   osKernelStart();
+  
 
-  /* We should never get here as control is now taken by the scheduler */
+  /* We should never get  here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -221,11 +222,17 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 1 */
   if(htim->Instance == TIM12)
   {
-    for(int i = 0;i < 5;i++)
+    for(int i = 0;i < 8;i++)
     {
        hDJI[i].flag = 1 ; 
     }
-    
+    // positionServo(180,&hDJI[5]);
+    // CanTransmit_DJI_5678(&hcan2,hDJI[4].speedPID.output,
+    // hDJI[5].speedPID.output,
+    // hDJI[6].speedPID.output,
+    // hDJI[7].speedPID.output);
+    // //updown_ctrl(180);
+
   }
 
   /* USER CODE END Callback 1 */

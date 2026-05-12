@@ -77,7 +77,8 @@ void CanDataDecode(CAN_RxHeaderTypeDef RxHeader){
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan){
     CAN_RxHeaderTypeDef   RxHeader;
-    if( hcan->Instance == hcan1.Instance ){
+    if( hcan->Instance == hcan1.Instance )
+    {
         if(HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, CanReceiveData) != HAL_OK)
         {
 
@@ -85,4 +86,20 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan){
         }
         CanDataDecode(RxHeader);
     }
+    
 }
+
+void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan){
+    CAN_RxHeaderTypeDef   RxHeader;
+    if( hcan->Instance == hcan2.Instance )
+    {
+        if(HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO1, &RxHeader, CanReceiveData) != HAL_OK)
+        {
+
+            Error_Handler();
+        }
+        CanDataDecode(RxHeader);
+    }
+    
+}
+

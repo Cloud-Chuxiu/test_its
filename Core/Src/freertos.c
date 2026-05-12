@@ -30,6 +30,7 @@
 #include "Thread_FT.h"
 #include "SCS.h"
 #include "updown.h"
+#include "beam.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -118,18 +119,22 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
-  //Chassis_Start();
+  Chassis_Start();
   //FT_Start();
-  FT_Init();
+ // FT_Init();
   //HAL_UART_Transmit(&huart2,command,13,HAL_MAX_DELAY);
-
+  printf("ready\n");
   /* Infinite loop */
   for(;;)
   {
-    updown_ctrl(180);
-
-
+    osDelay(3000);
+    updown_ctrl(480);
+    //osDelay(1000);
+    //chassis_ctrl(3000); 
+    //osDelay(1000);
+    //beam_ctrl(720);
     osDelay(1);
+
   }
   /* USER CODE END StartDefaultTask */
 }

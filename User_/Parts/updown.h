@@ -9,6 +9,9 @@
 void updown_ctrl(float pos); //зјБъ
 void updown_move(float distance);
 void updown_Init();
+void updown_posget();
+
+
 
 
 

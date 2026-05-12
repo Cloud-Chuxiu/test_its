@@ -5,23 +5,31 @@
 
 DJI_t hDJI[8];
 //使用DJI init前需要指定motorType
-void DJI_Init(){
+
+//大疆电机初始化
+void DJI_Init()
+{
 	for (int i = 0; i < 8; i++)
     {
+		//PID初始化
+		//可能不同电机需要设定不同的参数
+		
 		//speedPID
         hDJI[i].speedPID.KP = 12;
         hDJI[i].speedPID.KI = 0.2;
         hDJI[i].speedPID.KD = 5;
-        hDJI[i].speedPID.outputMax = 4000
+        hDJI[i].speedPID.outputMax = 6000
 		;  //speed limit
-
 		//posPID
-        hDJI[i].posPID.KP = 100.0f;
-        hDJI[i].posPID.KI = 1.0f;
-        hDJI[i].posPID.KD =0.0f;
-        hDJI[i].posPID.outputMax = 5000;
-//			  hDJI[i].posPID.outputMin = 1500;
         
+		hDJI[i].posPID.KP = 150.0f;
+        hDJI[i].posPID.KI = 2.0f;
+        hDJI[i].posPID.KD = 0.0f;
+        hDJI[i].posPID.outputMax = 6000;
+
+		//hDJI[i].posPID.outputMin = 1500;
+        
+		
 		if( hDJI[i].motorType == M3508 ){
 			hDJI[i].reductionRate = 3591.0f/187.0f;//2006减速比为36 3508减速比约为19
 		}
