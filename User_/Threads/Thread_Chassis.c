@@ -1,31 +1,22 @@
 #include "Thread_Chassis.h"
 
-float Chassis_distance;
+float Chassis_distance = 0;
 float* pChassis_distance = &Chassis_distance;
 
-osMessageQueueId_t Chassis_Queue01Handle;     //定义消息队列的句柄 （全局）
-const osMessageQueueAttr_t Chassis_Queue01_attributes = {
-  .name = "Chassis_Queue01"
-};
 
-xSemaphoreHandle xMutex_test01;  //定义一个互斥量 （全局）
-
-double protected_variable;  //定义一个受保护的变量，假设它是一个double类型的变量
 
 void Chassis_Function(void *argument)
 {
   /* USER CODE BEGIN ITS_Function */
   
-  Chassis_Queue01Handle = osMessageQueueNew (16, sizeof(float), &Chassis_Queue01_attributes);//初始化队列
-  xMutex_test01 = xSemaphoreCreateRecursiveMutex(); //初始化递归互斥量
   
-  chassis_init();
-  
+  osDelay(1000);
   /* Infinite loop */
   for(;;)
   {
     //底盘伺服线程 移动指定距离，并且返回坐标
-    //chassis_ctrl(2000);
+    chassis_move(3000);
+    osDelay(1);
     //printf("finished\n");
     // chassis_readpos();
     //osDelay(2000);

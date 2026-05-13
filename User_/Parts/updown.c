@@ -36,7 +36,7 @@ void updown_ctrl(float pos) //зјБъ
         }
         if(hDJI[5].speedPID.output == 0)
         {
-            
+            hDJI[5].flag = 10;
             printf("return\n");
             return;
         }

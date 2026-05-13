@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "Thread_Chassis.h"
+#include "Thread_Start.h"
 #include "chassis.h"
 #include "Thread_FT.h"
 #include "SCS.h"
@@ -119,21 +119,24 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
+  //osDelay(3000);
+  Updown_Start();
   Chassis_Start();
-  //FT_Start();
+  Beam_Start();
  // FT_Init();
   //HAL_UART_Transmit(&huart2,command,13,HAL_MAX_DELAY);
-  printf("ready\n");
+  //printf("ready\n");
   /* Infinite loop */
   for(;;)
   {
-    osDelay(3000);
-    updown_ctrl(480);
-    //osDelay(1000);
-    //chassis_ctrl(3000); 
-    //osDelay(1000);
-    //beam_ctrl(720);
+    //chassis_move(2000);
+    //updown_move(480);
     osDelay(1);
+    // osDelay(1000);
+    // chassis_ctrl(2000);
+    // osDelay(1000);
+    // beam_ctrl(720);
+    // osDelay(1000);
 
   }
   /* USER CODE END StartDefaultTask */

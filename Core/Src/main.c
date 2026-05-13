@@ -117,12 +117,13 @@ int main(void)
     hDJI[i].motorType = M3508;
   }
   DJI_Init();
-
+  HAL_Delay(5000); //等待各模块初始化
   /* USER CODE END 2 */
 
   /* Init scheduler */
   osKernelInitialize();  /* Call init function for freertos objects (in freertos.c) */
   MX_FREERTOS_Init();
+
 
   /* Start scheduler */
   osKernelStart();
@@ -221,18 +222,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   }
   /* USER CODE BEGIN Callback 1 */
   if(htim->Instance == TIM12)
-  {
-    for(int i = 0;i < 8;i++)
-    {
-       hDJI[i].flag = 1 ; 
-    }
-    // positionServo(180,&hDJI[5]);
-    // CanTransmit_DJI_5678(&hcan2,hDJI[4].speedPID.output,
-    // hDJI[5].speedPID.output,
-    // hDJI[6].speedPID.output,
-    // hDJI[7].speedPID.output);
-    // //updown_ctrl(180);
-
+  {     
+  
   }
 
   /* USER CODE END Callback 1 */
