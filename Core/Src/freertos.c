@@ -122,7 +122,6 @@ void StartDefaultTask(void *argument)
   //osDelay(3000);
   Updown_Start();
   Chassis_Start();
-  Beam_Start();
  // FT_Init();
   //HAL_UART_Transmit(&huart2,command,13,HAL_MAX_DELAY);
   //printf("ready\n");
