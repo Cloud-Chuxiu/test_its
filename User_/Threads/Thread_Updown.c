@@ -16,7 +16,7 @@ void Updown_Function(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    updown_move(480);
+    updown_move(Updown_distance);
     osDelay(1);
   }
   /* USER CODE END ITS_Function */

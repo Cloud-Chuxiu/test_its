@@ -1,18 +1,21 @@
 #include "Thread_FT.h"
 
-FT_STS_t *Claw_0;
+int16_t FT_phy = 0;
+int16_t* pFT_phy = &FT_phy;
 
 
 void FT_Function(void *argument)
 {
   /* USER CODE BEGIN ITS_Function */
-  FT_Write_Speed_Setup();
-  FT_Write_Position(Claw_0,1024,50,50);
+  FT_Init();
+  FT_phy = 1350;
+
   /* Infinite loop */
   for(;;)
   {
-    
-    osDelay(1);
+
+    WritePosEx(&h_FT_STS[0],FT_phy,20,20);
+    osDelay(50);
   }
   /* USER CODE END ITS_Function */
 }

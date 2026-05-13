@@ -15,7 +15,7 @@ void PTZ_Function(void *argument)
   /* Infinite loop */
   for(;;)
   {
-   // PTZ_move(720);
+   PTZ_move(0);
     osDelay(1);
   }
   /* USER CODE END ITS_Function */
