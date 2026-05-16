@@ -15,7 +15,7 @@ void Chassis_Function(void *argument)
   for(;;)
   {
     //底盘伺服线程 移动指定距离，并且返回坐标
-    chassis_move(3000);
+    chassis_move(Chassis_distance);
     osDelay(1);
     //printf("finished\n");
     // chassis_readpos();

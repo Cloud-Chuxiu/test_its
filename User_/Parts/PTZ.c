@@ -3,7 +3,7 @@
 //³ÝÌõ³õÊ¼»¯
 void PTZ_Init()
 {
-    hDJI[5].motorType = M3508;
+    hDJI[4].motorType = M3508;
     DJI_Init();
 }
 
@@ -11,7 +11,7 @@ void PTZ_Init()
 //Éý½µ
 void PTZ_move(float distance)
 {
-    positionServo(distance,&hDJI[5]);
+    positionServo(distance,&hDJI[4]);
     CanTransmit_DJI_5678(&hcan2,hDJI[4].speedPID.output,
     hDJI[5].speedPID.output,
     hDJI[6].speedPID.output,

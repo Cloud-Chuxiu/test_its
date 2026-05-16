@@ -144,7 +144,7 @@ void FT_Init()
 		h_FT_STS[i].present_time_ms = 0;
 		h_FT_STS[i].last_time_ms = 0;
 		h_FT_STS[i].Flag = 1;
-		WritePosEx(&h_FT_STS[i],1350,50,50);
+		WritePosEx(&h_FT_STS[i],2300,50,50);
 	}
 	setEnd(0);//SMS_STS舵机为大端存储结构
 

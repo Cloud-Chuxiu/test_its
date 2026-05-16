@@ -125,18 +125,19 @@ void StartDefaultTask(void *argument)
   Updown_Start();
   //Chassis_Start();
   FT_Start();
-  PTZ_Start()
   //HAL_UART_Transmit(&huart2,command,13,HAL_MAX_DELAY);
   //printf("ready\n");
   /* Infinite loop */
-  osDelay(3000);
-  *pUpdown_distance = 720;
-  osDelay(3000);
-  *pUpdown_distance = 390;
-  osDelay(3000);
-  *pFT_phy = 600;
-  osDelay(3000);
-  *pUpdown_distance = 720;
+   osDelay(3000);
+  *pUpdown_distance = 480;
+   osDelay(3000);
+  *pUpdown_distance = 240;
+   osDelay(3000);
+  *pUpdown_distance = 480;
+  
+   // *pFT_phy = 600;
+  // osDelay(3000);
+  // *pUpdown_distance = 720;
 
   for(;;)
   {

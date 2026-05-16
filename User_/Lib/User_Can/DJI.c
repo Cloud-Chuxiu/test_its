@@ -11,6 +11,7 @@ void DJI_Init()
 {
 	for (int i = 0; i < 8; i++)
     {
+	 
 		//PID初始化
 		//可能不同电机需要设定不同的参数
 		

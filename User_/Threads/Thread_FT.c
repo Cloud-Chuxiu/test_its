@@ -8,7 +8,7 @@ void FT_Function(void *argument)
 {
   /* USER CODE BEGIN ITS_Function */
   FT_Init();
-  FT_phy = 1350;
+  FT_phy = 2300;
 
   /* Infinite loop */
   for(;;)

@@ -6,4 +6,9 @@
 #include "Caculate.h"
 #include "State.h"
 
+
+
+
+void PTZ_move(float distance);
+
 #endif
