@@ -11,8 +11,31 @@ void DJI_Init()
 {
 	for (int i = 0; i < 8; i++)
     {
-	 
-		//PID初始化
+	//升降电机的独立pid
+	 if(i == 5)
+	 {
+			//PID初始化
+		//可能不同电机需要设定不同的参数
+		
+		//speedPID
+        hDJI[i].speedPID.KP = 12;
+        hDJI[i].speedPID.KI = 0.2;
+        hDJI[i].speedPID.KD = 5;
+        hDJI[i].speedPID.outputMax = 4000
+		;  //speed limit
+		//posPID
+        
+		hDJI[i].posPID.KP = 60.0f;
+        hDJI[i].posPID.KI = 0.5f;
+        hDJI[i].posPID.KD = 0.0f;
+        hDJI[i].posPID.outputMax = 4000;
+
+		//hDJI[i].posPID.outputMin = 1500;
+	 }
+	 //其余电机共用的pid
+	 else
+	 {
+			//PID初始化
 		//可能不同电机需要设定不同的参数
 		
 		//speedPID
@@ -29,6 +52,8 @@ void DJI_Init()
         hDJI[i].posPID.outputMax = 4000;
 
 		//hDJI[i].posPID.outputMin = 1500;
+	 }
+	
         
 		
 		if( hDJI[i].motorType == M3508 ){

@@ -2,7 +2,8 @@
 #define _STATE_H__
 
 #include "DJI.h"
-
+#include <stdio.h>
+#include "usart.h"
 typedef struct{
 
     float state_x; //
