@@ -8,6 +8,8 @@ extern uint8_t Rxbuffer_1[];
 extern uint8_t usart1_rx[];
 extern uint16_t UartFlag[];
 extern LidarPointTypedef Lidar1;
+extern volatile uint32_t usart1_rx_bytes;
+extern volatile uint32_t usart1_frame_cnt;
 
 void Usart_Start();
 void Usart_Function(void *argument);

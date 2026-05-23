@@ -11,12 +11,26 @@ void DJI_Init()
 {
 	for (int i = 0; i < 8; i++)
     {
-	//升降电机的独立pid
+	 //底盘电机的pid参数
+	 if(i == 0 || i == 1)
+ 	 {
+		hDJI[i].motorType = M3508;
+        hDJI[i].reductionRate = 3591.0f / 187.0f;
+        hDJI[i].encoder_resolution = 8192.0f;
+
+        hDJI[i].speedPID.KP = 12;
+        hDJI[i].speedPID.KI = 0.2;
+        hDJI[i].speedPID.KD = 5;
+        hDJI[i].speedPID.outputMax = 2000;
+
+        hDJI[i].posPID.KP = 80.0f;
+        hDJI[i].posPID.KI = 2.0f;
+        hDJI[i].posPID.KD = 0.0f;
+        hDJI[i].posPID.outputMax = 4000;
+	 }
+	 //升降结构的pid参数
 	 if(i == 5)
 	 {
-			//PID初始化
-		//可能不同电机需要设定不同的参数
-		
 		//speedPID
         hDJI[i].speedPID.KP = 12;
         hDJI[i].speedPID.KI = 0.2;
@@ -152,6 +166,8 @@ void get_dji_offset(DJI_t *motor, uint8_t* fdbData){
 
 	motor->Calculate.RotorAngle_0_360_OffSet = motor->FdbData.RotorAngle_0_360;
 }
+
+
 
 //解码电机回传信息
 HAL_StatusTypeDef DJI_CanMsgDecode(uint32_t Stdid, uint8_t* fdbData){

@@ -1,15 +1,19 @@
 #include "Thread_Usart.h"
 
+
 void Usart_Function(void *argument)
 {
   /* USER CODE BEGIN Usart_Function */
-
+  printf("u6ready\r\n");
+  uint32_t tick = 0;
+  HAL_UART_Receive_IT(&huart1, usart1_rx, 1);
   /* Infinite loop */
   for (;;) {
     if (UartFlag[0]) {
       STP_23L_Decode(Rxbuffer_1, &Lidar1);
       UartFlag[0] = 0;
     }
+    
     osDelay(1);
   }
   /* USER CODE END Usart_Function */

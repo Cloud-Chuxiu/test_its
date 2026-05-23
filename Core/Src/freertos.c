@@ -120,7 +120,7 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   //osDelay(3000);
-  //Usart_Start();  
+  Usart_Start();  
 
   
   
@@ -129,12 +129,10 @@ void StartDefaultTask(void *argument)
   // *pUpdown_distance = 720;
 
   for(;;)
-  {
-    printf("Init finished\n");
-
+  {    
     //chassis_move(2000);
     //updown_move(480);
-    osDelay(1);
+    osDelay(10);
     // osDelay(1000);
     // chassis_ctrl(2000);
     // osDelay(1000);

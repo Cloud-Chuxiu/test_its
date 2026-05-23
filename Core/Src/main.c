@@ -105,31 +105,27 @@ int main(void)
   MX_CAN2_Init();
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
-  HAL_UART_Receive_IT(&huart3,rxbuffer,6);
-  HAL_UART_Receive_IT(&huart1,rxbuffer,6);
   HAL_TIM_Base_Start_IT(&htim8);  // 启动时基
   HAL_TIM_Base_Start_IT(&htim12); // 启动时基
   //配置can过滤器
-  CANFilterInit(&hcan1);
-  CANFilterInit(&hcan2);
+  // CANFilterInit(&hcan1);
+  // CANFilterInit(&hcan2);
   for(int i = 0; i < 8;i++)
   {
     hDJI[i].motorType = M3508;
   }
   DJI_Init();
-  HAL_Delay(3000); //等待各模块初始化
+  //HAL_Delay(3000); //等待各模块初始化
   /* USER CODE END 2 */
 
   /* Init scheduler */
   osKernelInitialize();  /* Call init function for freertos objects (in freertos.c) */
   MX_FREERTOS_Init();
 
-
   /* Start scheduler */
   osKernelStart();
-  
 
-  /* We should never get  here as control is now taken by the scheduler */
+  /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)

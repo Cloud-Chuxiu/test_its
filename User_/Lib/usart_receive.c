@@ -27,6 +27,10 @@ uint8_t usart6_rx[1];
 uint8_t receive_buffer[24];
 float weight_placement[5] = {0};
 
+volatile uint32_t usart1_rx_bytes = 0;
+volatile uint32_t usart1_frame_cnt = 0;
+/*********************Ras_pi************************/
+
 float weight_placement_tmp[5] = {0};
 uint16_t tar_count;
 //uint16_t success_cnt;
@@ -36,8 +40,9 @@ uint16_t inner_ring_flag;
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-    if (huart->Instance != USART1) return;
-
+    if (huart->Instance == USART1)
+    {
+    usart1_rx_bytes++;
     static uint16_t u1state = 0;
     static uint16_t crc1    = 0;
     uint8_t tmp1 = usart1_rx[0];
@@ -57,12 +62,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         Rxbuffer_1[u1state] = tmp1;
         if (tmp1 == crc1 % 256) {
             UartFlag[0] = 1;
+            usart1_frame_cnt++;
         }
         u1state = 0;
         crc1    = 0;
     }
-
     HAL_UART_Receive_IT(&huart1, usart1_rx, 1);
+    }
+    
 }
 // void HAL_UART_ErrorCallback(UART_HandleTypeDef *uartHandle)
 // {

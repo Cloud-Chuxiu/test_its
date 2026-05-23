@@ -8,4 +8,5 @@
 
 HAL_StatusTypeDef CANFilterInit(CAN_HandleTypeDef* hcan);
 
+
 #endif

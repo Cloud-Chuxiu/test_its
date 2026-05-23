@@ -40,7 +40,6 @@ void positionServo(float ref, DJI_t * motor){
 	PID_Calc(&motor->speedPID);
 	
 	//死区
-	
 	if(fabs(motor->posPID.fdb - ref) < 3)
 	{
 		motor->speedPID.output = 0;
@@ -48,6 +47,23 @@ void positionServo(float ref, DJI_t * motor){
 	
 }
 
+
+//底盘位置伺服函数（激光雷达位置反馈 + 编码器速度反馈）
+void positionServo_chassis(float ref, DJI_t *motor, float lidar_distance){
+
+	motor->posPID.ref = ref;
+	motor->posPID.fdb = lidar_distance;
+	PID_Calc(&motor->posPID);
+
+	motor->speedPID.ref = motor->posPID.output;
+	motor->speedPID.fdb = motor->FdbData.rpm;
+	PID_Calc(&motor->speedPID);
+
+	if(fabs(lidar_distance - ref) < 3)
+	{
+		motor->speedPID.output = 0;
+	}
+}
 
 //速度伺服函数
 void speedServo(float ref, DJI_t * motor){
