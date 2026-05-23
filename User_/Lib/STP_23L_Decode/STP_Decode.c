@@ -28,7 +28,7 @@ void STP_23L_Decode(uint8_t *buffer, LidarPointTypedef*lidardata) // num:指明�
                     dis_sum += lidardata->distance;
                 }
                 lidardata->distance_aver = dis_sum / 12;
-                printf("avg:%.1f mm\r\n", lidardata->distance_aver);
+                //printf("avg:%.1f mm\r\n", lidardata->distance_aver);
             }
          }
     }

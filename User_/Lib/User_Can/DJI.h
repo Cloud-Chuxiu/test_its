@@ -51,6 +51,7 @@ typedef struct
     {
         float AxisAngle_inDegree; // 电机轴输出角度 单位 度°
         float AxisVelocity;       // 电机轴输出速度 单位 rpm
+        float lidar_distance;     // 激光雷达测距值 单位 mm
     } AxisData;
 
     float reductionRate;      // 减速比

@@ -5,7 +5,7 @@
 
 void positionServo(float ref, DJI_t * motor);
 
-void positionServo_chassis(float ref, DJI_t *motor, float lidar_distance);
+void positionServo_chassis(float ref, DJI_t *motor);
 
 void speedServo(float ref, DJI_t * motor);
 
