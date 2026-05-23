@@ -120,17 +120,9 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   //osDelay(3000);
-  
+  //Usart_Start();  
 
   
-  Updown_Start();
-  //Chassis_Start();
-  FT_Start();
-  //HAL_UART_Transmit(&huart2,command,13,HAL_MAX_DELAY);
-  //printf("ready\n");
-  /* Infinite loop */
-   osDelay(3000);
-  *pUpdown_distance = 480;
   
   
   // osDelay(3000);
@@ -138,6 +130,8 @@ void StartDefaultTask(void *argument)
 
   for(;;)
   {
+    printf("Init finished\n");
+
     //chassis_move(2000);
     //updown_move(480);
     osDelay(1);

@@ -117,7 +117,7 @@ int main(void)
     hDJI[i].motorType = M3508;
   }
   DJI_Init();
-  HAL_Delay(5000); //等待各模块初始化
+  HAL_Delay(3000); //等待各模块初始化
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -188,20 +188,7 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-  if(huart->Instance == USART3)
-  {
-    HAL_UART_Transmit_IT(&huart1,rxbuffer,6);
-    HAL_UART_Receive_IT(&huart3,rxbuffer,6);
-  }
-  if(huart->Instance == USART1)
-  {
-    HAL_UART_Transmit_IT(&huart3,rxbuffer,6);
-    HAL_UART_Receive_IT(&huart1,rxbuffer,6);
-  }
-  
-}
+
 /* USER CODE END 4 */
 
 /**
