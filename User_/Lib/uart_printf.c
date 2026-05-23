@@ -38,4 +38,15 @@ __attribute__((weak)) int _write(int file, uint8_t *ptr, int len)
 //         ;
 //     return ch;
 // }
+
+// 非阻塞浮点数打印（双缓冲，避免发送冲突）
+void float_print(UART_HandleTypeDef *huart, float value)
+{
+    static char buf[2][20];
+    static uint8_t idx = 0;
+    idx = (idx + 1) % 2;
+    int len = snprintf(buf[idx], 20, "%.1f\r\n", value);
+    HAL_UART_Transmit_IT(huart, (uint8_t *)buf[idx], len);
+}
+
 #endif

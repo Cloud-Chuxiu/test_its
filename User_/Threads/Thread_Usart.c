@@ -13,9 +13,9 @@ void Usart_Function(void *argument)
       STP_23L_Decode(Rxbuffer_1, &Lidar1);
       UartFlag[0] = 0;
       hDJI[0].AxisData.lidar_distance = Lidar1.distance_aver;
+     // float_print(&huart6,hDJI[0].AxisData.lidar_distance);  
     }
-    
-    osDelay(1);
+      osDelay(1);
   }
   /* USER CODE END Usart_Function */
 }

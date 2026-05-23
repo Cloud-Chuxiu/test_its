@@ -9,3 +9,4 @@
 #include "cmsis_os2.h"
 #include "semphr.h"
 #include <stdio.h>
+#include "uart_printf.h"

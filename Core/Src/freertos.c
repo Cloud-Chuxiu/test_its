@@ -121,9 +121,13 @@ void StartDefaultTask(void *argument)
   /* USER CODE BEGIN StartDefaultTask */
   //osDelay(3000);
   Usart_Start();  
+  Chassis_Start();
+  Updown_Start();
+  osDelay(1000);
+  *pChassis_distance = 1000;
+  *pUpdown_distance = 480;
 
-  
-  
+
   
   // osDelay(3000);
   // *pUpdown_distance = 720;
