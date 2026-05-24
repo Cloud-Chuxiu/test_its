@@ -121,10 +121,10 @@ void StartDefaultTask(void *argument)
   /* USER CODE BEGIN StartDefaultTask */
   //osDelay(3000);
   Usart_Start();  
-  Chassis_Start();
+  //Chassis_Start();
   Updown_Start();
   osDelay(1000);
-  *pChassis_distance = 2000;
+  *pChassis_distance = 3000;
    *pUpdown_distance = 0;
 
 
@@ -134,15 +134,7 @@ void StartDefaultTask(void *argument)
 
   for(;;)
   {    
-    //chassis_move(2000);
-    //updown_move(480);
     osDelay(10);
-    // osDelay(1000);
-    // chassis_ctrl(2000);
-    // osDelay(1000);
-    // beam_ctrl(720);
-    // osDelay(1000);
-
   }
   /* USER CODE END StartDefaultTask */
 }
