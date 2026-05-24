@@ -13,7 +13,7 @@ void chassis_init()
 //µ×ÅÌ¿ØÖÆ
 void chassis_move(float distance)
 {
-    positionServo_chassis(distance,&hDJI[0]);
+    positionServo(distance,&hDJI[0]);
     //positionServo(-distance,&hDJI[1]);
     CanTransmit_DJI_1234(&hcan1,hDJI[0].speedPID.output,
     -hDJI[0].speedPID.output,

@@ -108,14 +108,15 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim8);  // 启动时基
   HAL_TIM_Base_Start_IT(&htim12); // 启动时基
   //配置can过滤器
-  // CANFilterInit(&hcan1);
-  // CANFilterInit(&hcan2);
+  CANFilterInit(&hcan1);
+  CANFilterInit(&hcan2);
   for(int i = 0; i < 8;i++)
   {
     hDJI[i].motorType = M3508;
   }
   DJI_Init();
-  //HAL_Delay(3000); //等待各模块初始化
+  //printf("READY\n");
+  HAL_Delay(3000); //等待各模块初始化
   /* USER CODE END 2 */
 
   /* Init scheduler */
