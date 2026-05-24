@@ -1,6 +1,8 @@
 #ifndef DJI_H
 #define DJI_H
 
+#define CHASSIS_MAX 6000.0f
+
 #include "can.h"
 
 #define LAST 0

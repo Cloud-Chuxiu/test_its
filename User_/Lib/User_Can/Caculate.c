@@ -51,6 +51,15 @@ void positionServo(float ref, DJI_t * motor){
 //底盘位置伺服函数（激光雷达位置反馈 + 编码器速度反馈）
 void positionServo_chassis(float ref, DJI_t *motor){
 
+	float error = fabs(motor->AxisData.lidar_distance - ref);
+	if (error < 200.0f) {
+    motor->posPID.outputMax = CHASSIS_MAX * (error / 200.0f);
+    if (motor->posPID.outputMax < 500.0f)
+        motor->posPID.outputMax = 500.0f;  // 最低速度保证能到达
+	} else {
+    motor->posPID.outputMax = CHASSIS_MAX;
+	}
+
 	motor->posPID.ref = ref;
 	motor->posPID.fdb = motor->AxisData.lidar_distance;
 	PID_Calc(&motor->posPID);
