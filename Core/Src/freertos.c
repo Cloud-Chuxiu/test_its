@@ -120,12 +120,11 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   //osDelay(3000);
-  Usart_Start();  
-  //Chassis_Start();
-  Updown_Start();
+ Usart_Start();
+  DJI_Start();
   osDelay(1000);
-  *pChassis_distance = 3000;
-   *pUpdown_distance = 0;
+  *pChassis_distance = 2800;
+    *pUpdown_distance = 0;
 
 
   
@@ -134,6 +133,7 @@ void StartDefaultTask(void *argument)
 
   for(;;)
   {    
+
     osDelay(10);
   }
   /* USER CODE END StartDefaultTask */

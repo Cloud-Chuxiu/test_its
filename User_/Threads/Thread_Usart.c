@@ -13,7 +13,12 @@ void Usart_Function(void *argument)
       STP_23L_Decode(Rxbuffer_1, &Lidar1);
       UartFlag[0] = 0;
       hDJI[0].AxisData.lidar_distance = Lidar1.distance_aver;
-      float_print(&huart6,hDJI[0].AxisData.lidar_distance);  
+      // static uint8_t once = 0;
+      // if (++once % 2) {
+      //   printf("L:%.1f\r\n", Lidar1.distance_aver);
+      // } else {
+      //   printf("E:%.1f\r\n", hDJI[0].AxisData.AxisAngle_inDegree);
+      // }
     }
       osDelay(1);
   }

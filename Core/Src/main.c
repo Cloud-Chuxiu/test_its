@@ -115,7 +115,6 @@ int main(void)
     hDJI[i].motorType = M3508;
   }
   DJI_Init();
-  //printf("READY\n");
   HAL_Delay(3000); //等待各模块初始化
   /* USER CODE END 2 */
 

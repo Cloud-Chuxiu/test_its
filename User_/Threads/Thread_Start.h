@@ -3,7 +3,6 @@
 
 #endif
 
-#include "Thread_Beam.h"
-#include "Thread_Chassis.h"
-#include "Thread_Updown.h"
+#include "Thread_DJI.h"
 #include "Thread_Usart.h"
+#include "Thread_StateMachine.h"

@@ -23,9 +23,9 @@ void DJI_Init()
         hDJI[i].speedPID.KD = 5;
         hDJI[i].speedPID.outputMax = CHASSIS_MAX;
 
-        hDJI[i].posPID.KP = 100.0f;
-        hDJI[i].posPID.KI = 2.0f;
-        hDJI[i].posPID.KD = 0.0f;
+        hDJI[i].posPID.KP = 60.0f;
+        hDJI[i].posPID.KI = 0.0f;
+        hDJI[i].posPID.KD = 70.0f;
         hDJI[i].posPID.outputMax = CHASSIS_MAX;
 	 }
 	 //升降结构的pid参数

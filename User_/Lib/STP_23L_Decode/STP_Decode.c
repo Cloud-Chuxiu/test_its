@@ -23,12 +23,22 @@ void STP_23L_Decode(uint8_t *buffer, LidarPointTypedef*lidardata) // num:指明�
             if (buffer[194] == CS_sum%256)                                                                        //检测校验码
             {
                 float dis_sum = 0;
+                int16_t dis_raw[12];
                 for (uint16_t i = 0; i < 12; i++) {
-                    lidardata->distance = buffer[10 + 15 * i] + (buffer[11 + 15 * i] << 8);
-                    dis_sum += lidardata->distance;
+                    dis_raw[i] = buffer[10 + 15 * i] + (buffer[11 + 15 * i] << 8);
+                    dis_sum += dis_raw[i];
                 }
                 lidardata->distance_aver = dis_sum / 12;
-                //printf("avg:%.1f mm\r\n", lidardata->distance_aver);
+
+                // 诊断：输出全部12个点原始值，定位跳变来源
+                // static uint32_t dbg_cnt = 0;
+                // if (++dbg_cnt % 10 == 0) {
+                //     printf("[DEBUG] ");
+                //     for (int i = 0; i < 12; i++) {
+                //         printf("%d ", dis_raw[i]);
+                //     }
+                //     printf("| avg:%.1f\r\n", lidardata->distance_aver);
+                
             }
          }
     }
