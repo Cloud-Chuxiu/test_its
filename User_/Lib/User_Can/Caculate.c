@@ -55,7 +55,7 @@ void positionServo_chassis(float ref, DJI_t *motor)
 {
     static float fused_pos    = 0;
     static float enc_latch    = 0;
-    static uint32_t last_fr   = 0;
+    static uint32_t last_fr   = 0xFFFFFFFF;
 
     /* ---- 编码器插值融合 ---- */
     if (usart1_frame_cnt != last_fr) {

@@ -123,7 +123,8 @@ void StartDefaultTask(void *argument)
  Usart_Start();
   DJI_Start();
   osDelay(1000);
-  *pChassis_distance = 2800;
+  *pChassis_distance = 300;
+  *pBeam_distance = 0;
     *pUpdown_distance = 0;
 
 
@@ -133,8 +134,9 @@ void StartDefaultTask(void *argument)
 
   for(;;)
   {    
+    printf("%.2f\n",hDJI[0].speedPID.output);
 
-    osDelay(10);
+    osDelay(100);
   }
   /* USER CODE END StartDefaultTask */
 }

@@ -10,18 +10,18 @@ float *pUpdown_distance  = &Updown_distance;
 
 void DJI_Function(void *argument)
 {
-  osDelay(1000);
-
+  
+  osDelay(500);
   for (;;) {
     // ----- 位置伺服计算（不发送CAN）-----
-    positionServo(Chassis_distance, &hDJI[0]);
+    positionServo_chassis(Chassis_distance, &hDJI[0]);
     positionServo(Beam_distance, &hDJI[2]);
     positionServo(Updown_distance, &hDJI[5]);
 
     // ----- 统一CAN发送（避免竞态）-----
     CanTransmit_DJI_1234(&hcan1,
-        -hDJI[0].speedPID.output,   // m0: 底盘
-        hDJI[0].speedPID.output,  // m1: 底盘反向跟随
+        hDJI[0].speedPID.output,   // m0: 底盘
+        -hDJI[0].speedPID.output,  // m1: 底盘反向跟随
         hDJI[2].speedPID.output,   // m2: 横梁
         hDJI[3].speedPID.output);  // m3
 
