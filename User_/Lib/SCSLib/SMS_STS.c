@@ -144,7 +144,7 @@ void FT_Init()
 		h_FT_STS[i].present_time_ms = 0;
 		h_FT_STS[i].last_time_ms = 0;
 		h_FT_STS[i].Flag = 1;
-		WritePosEx(&h_FT_STS[i],800,50,50);  //初始先让夹爪张开最大
+		WritePosEx(&h_FT_STS[i],FT_INIT,50,50);  //初始先让夹爪张开最大
 	}
 	setEnd(0);//SMS_STS舵机为大端存储结构
 

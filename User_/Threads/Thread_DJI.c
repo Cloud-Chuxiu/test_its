@@ -14,7 +14,10 @@ void DJI_Function(void *argument)
   osDelay(500);
   for (;;) {
     // ----- 位置伺服计算（不发送CAN）-----
-    positionServo_chassis(Chassis_distance, &hDJI[0]);
+    if(Chassis_distance != 0)
+    {
+      positionServo_chassis(Chassis_distance, &hDJI[0]);
+    }
     positionServo(Beam_distance, &hDJI[2]);
     positionServo(Updown_distance, &hDJI[5]);
 

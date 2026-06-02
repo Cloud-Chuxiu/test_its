@@ -1,14 +1,23 @@
 #include "Thread_StateMachine.h"
 
 StateMachine_t sm = {
-    .current_state = SM_IDLE,
-    .next_state    = SM_IDLE,
-    .target_x      = 0,
-    .target_y      = 0,
-    .target_z      = 0,
-    .target_claw   = 0,
-    .state_entered = 0,
-    .timeout_ms    = 0,
+    .current_state   = SM_IDLE,
+    .next_state      = SM_IDLE,
+    .pick_x          = 0,
+    .drop_x          = 0,
+    .beam_pick       = 0,
+    .beam_drop       = 0,
+    .up_lift         = 0,
+    .up_pick         = 0,
+    .up_drop         = 0,
+    .claw_grab       = 0,
+    .claw_release    = 0,
+    .target_x        = 0,
+    .target_y        = 0,
+    .target_z        = 0,
+    .target_claw     = 0,
+    .state_entered   = 0,
+    .timeout_ms      = 0,
 };
 
 /* ---------- 状态完成检测 ---------- */
@@ -33,8 +42,7 @@ static uint8_t Updown_Done(void)
 
 static uint8_t Claw_Done(void)
 {
-    // 夹爪通过时间判断（伺服电机以设定速度转动，根据角度差估算时间）
-    return (HAL_GetTick() - sm.state_entry_tick) > 3000;
+    return (HAL_GetTick() - sm.state_entry_tick) > 2000;
 }
 
 /* ---------- 状态跳转 ---------- */
@@ -69,62 +77,162 @@ void StateMachine_Function(void *argument)
             case SM_IDLE:
                 break;
 
-            /* ===== 底盘X轴 ===== */
+            /* ============ 旧版单步调试 ============ */
+
             case SM_CHASSIS_X:
                 if (sm.state_entered) {
                     printf("[SM] chassis -> %.1f mm\r\n", sm.target_x);
                     sm.state_entered = 0;
                 }
-                chassis_move(sm.target_x);
-                if (Chassis_Done()) {
-                    SM_EnterState(sm.next_state, 30000);
-                }
+                *pChassis_distance = sm.target_x;
+                if (Chassis_Done()) SM_EnterState(sm.next_state, 30000);
                 SM_CheckTimeout();
                 break;
 
-            /* ===== 横梁Y轴 ===== */
             case SM_BEAM_Y:
                 if (sm.state_entered) {
                     printf("[SM] beam -> %.1f\r\n", sm.target_y);
                     sm.state_entered = 0;
                 }
-                beam_move(sm.target_y);
-                if (Beam_Done()) {
-                    SM_EnterState(sm.next_state, 20000);
-                }
+                *pBeam_distance = sm.target_y;
+                if (Beam_Done()) SM_EnterState(sm.next_state, 20000);
                 SM_CheckTimeout();
                 break;
 
-            /* ===== 升降Z轴 ===== */
             case SM_UPDOWN_Z:
                 if (sm.state_entered) {
                     printf("[SM] updown -> %.1f\r\n", sm.target_z);
                     sm.state_entered = 0;
                 }
-                updown_move(sm.target_z);
-                if (Updown_Done()) {
-                    SM_EnterState(sm.next_state, 20000);
-                }
+                *pUpdown_distance = sm.target_z;
+                if (Updown_Done()) SM_EnterState(sm.next_state, 20000);
                 SM_CheckTimeout();
                 break;
 
-            /* ===== 夹爪动作 ===== */
             case SM_CLAW:
                 if (sm.state_entered) {
                     printf("[SM] claw -> %d\r\n", sm.target_claw);
                     sm.state_entered = 0;
                 }
                 WritePosEx(&h_FT_STS[0], sm.target_claw, 20, 50);
-                if (Claw_Done()) {
-                    SM_EnterState(sm.next_state, 10000);
+                if (Claw_Done()) SM_EnterState(sm.next_state, 10000);
+                SM_CheckTimeout();
+                break;
+
+            /* ============ 完整赛程 ============ */
+
+            /* 1. 升降升起 */
+            case SM_UPDOWN_LIFT:
+                if (sm.state_entered) {
+                    printf("[SM] updown -> lift %.1f\r\n", sm.up_lift);
+                    sm.state_entered = 0;
                 }
+                sm.target_z = sm.up_lift;
+                *pUpdown_distance = sm.up_lift;
+                if (Updown_Done()) SM_EnterState(SM_BEAM_PICK, 20000);
+                SM_CheckTimeout();
+                break;
+
+            /* 2. 横梁→取货侧 */
+            case SM_BEAM_PICK:
+                if (sm.state_entered) {
+                    printf("[SM] beam -> pick %.1f\r\n", sm.beam_pick);
+                    sm.state_entered = 0;
+                }
+                sm.target_y = sm.beam_pick;
+                *pBeam_distance = sm.beam_pick;
+                if (Beam_Done()) SM_EnterState(SM_CHASSIS_PICK, 20000);
+                SM_CheckTimeout();
+                break;
+
+            /* 3. 底盘→取货区 */
+            case SM_CHASSIS_PICK:
+                if (sm.state_entered) {
+                    printf("[SM] chassis -> pick %.1f mm\r\n", sm.pick_x);
+                    sm.state_entered = 0;
+                }
+                sm.target_x = sm.pick_x;
+                *pChassis_distance = sm.pick_x;
+                if (Chassis_Done()) SM_EnterState(SM_UPDOWN_PICK, 30000);
+                SM_CheckTimeout();
+                break;
+
+            /* 4. 升降下降取货 */
+            case SM_UPDOWN_PICK:
+                if (sm.state_entered) {
+                    printf("[SM] updown -> pick %.1f\r\n", sm.up_pick);
+                    sm.state_entered = 0;
+                }
+                sm.target_z = sm.up_pick;
+                *pUpdown_distance = sm.up_pick;
+                if (Updown_Done()) SM_EnterState(SM_CLAW_GRAB, 20000);
+                SM_CheckTimeout();
+                break;
+
+            /* 5. 夹爪夹取 */
+            case SM_CLAW_GRAB:
+                if (sm.state_entered) {
+                    printf("[SM] claw -> grab %d\r\n", sm.claw_grab);
+                    sm.state_entered = 0;
+                }
+                WritePosEx(&h_FT_STS[0], sm.claw_grab, 20, 50);
+                if (Claw_Done()) SM_EnterState(SM_UPDOWN_LIFT, 10000);
+                SM_CheckTimeout();
+                break;
+
+            /* 注意: CLAW_GRAB 完成后回到 SM_UPDOWN_LIFT 升起（复用同一状态） */
+
+            /* 6. 升降升起后 → 底盘→卸货区 */
+            case SM_CHASSIS_DROP:
+                if (sm.state_entered) {
+                    printf("[SM] chassis -> drop %.1f mm\r\n", sm.drop_x);
+                    sm.state_entered = 0;
+                }
+                sm.target_x = sm.drop_x;
+                *pChassis_distance = sm.drop_x;
+                if (Chassis_Done()) SM_EnterState(SM_BEAM_DROP, 30000);
+                SM_CheckTimeout();
+                break;
+
+            /* 7. 横梁→卸货侧 */
+            case SM_BEAM_DROP:
+                if (sm.state_entered) {
+                    printf("[SM] beam -> drop %.1f\r\n", sm.beam_drop);
+                    sm.state_entered = 0;
+                }
+                sm.target_y = sm.beam_drop;
+                *pBeam_distance = sm.beam_drop;
+                if (Beam_Done()) SM_EnterState(SM_UPDOWN_DROP, 20000);
+                SM_CheckTimeout();
+                break;
+
+            /* 8. 升降下降卸货 */
+            case SM_UPDOWN_DROP:
+                if (sm.state_entered) {
+                    printf("[SM] updown -> drop %.1f\r\n", sm.up_drop);
+                    sm.state_entered = 0;
+                }
+                sm.target_z = sm.up_drop;
+                *pUpdown_distance = sm.up_drop;
+                if (Updown_Done()) SM_EnterState(SM_CLAW_RELEASE, 20000);
+                SM_CheckTimeout();
+                break;
+
+            /* 9. 夹爪张开 */
+            case SM_CLAW_RELEASE:
+                if (sm.state_entered) {
+                    printf("[SM] claw -> release %d\r\n", sm.claw_release);
+                    sm.state_entered = 0;
+                }
+                WritePosEx(&h_FT_STS[0], sm.claw_release, 20, 50);
+                if (Claw_Done()) SM_EnterState(SM_DONE, 10000);
                 SM_CheckTimeout();
                 break;
 
             /* ===== 任务完成 ===== */
             case SM_DONE:
                 if (sm.state_entered) {
-                    printf("[SM] done\r\n");
+                    printf("[SM] mission done!\r\n");
                     sm.state_entered = 0;
                 }
                 sm.current_state = SM_IDLE;
@@ -141,7 +249,7 @@ void StateMachine_Function(void *argument)
             default:
                 break;
         }
-        osDelay(10); // 100Hz 轮询，对 10Hz LIDAR 绰绰有余
+        osDelay(20);
     }
 }
 
@@ -158,19 +266,35 @@ void SM_Start()
     osThreadNew(StateMachine_Function, NULL, &SM_attributes);
 }
 
-// 设置目标并启动一次任务流程
+// 旧版：单次取货
 void SM_SetTarget(float x, float y, float z, int16_t claw)
 {
     if (sm.current_state != SM_IDLE) return;
-
     sm.target_x    = x;
     sm.target_y    = y;
     sm.target_z    = z;
     sm.target_claw = claw;
+    sm.next_state  = SM_BEAM_Y;
+    SM_EnterState(SM_CHASSIS_X, 30000);
+}
 
-    // 串联状态链: X → Y → Z → CLAW → DONE
-    sm.next_state = SM_BEAM_Y;
-    SM_EnterState(SM_CHASSIS_X, 30000);  // 底盘超时30秒
+// 完整赛程
+void SM_StartMission(float pick_x, float drop_x,
+                     float beam_pick, float beam_drop,
+                     float up_lift, float up_pick, float up_drop,
+                     int16_t claw_grab, int16_t claw_release)
+{
+    if (sm.current_state != SM_IDLE) return;
+    sm.pick_x       = pick_x;
+    sm.drop_x       = drop_x;
+    sm.beam_pick    = beam_pick;
+    sm.beam_drop    = beam_drop;
+    sm.up_lift      = up_lift;
+    sm.up_pick      = up_pick;
+    sm.up_drop      = up_drop;
+    sm.claw_grab    = claw_grab;
+    sm.claw_release = claw_release;
+    SM_EnterState(SM_UPDOWN_LIFT, 20000);
 }
 
 void SM_Stop()
@@ -187,13 +311,22 @@ SM_State SM_GetState()
 const char* SM_StateName(SM_State s)
 {
     switch (s) {
-        case SM_IDLE:        return "IDLE";
-        case SM_CHASSIS_X:   return "CHASSIS_X";
-        case SM_BEAM_Y:      return "BEAM_Y";
-        case SM_UPDOWN_Z:    return "UPDOWN_Z";
-        case SM_CLAW:         return "CLAW";
-        case SM_DONE:        return "DONE";
-        case SM_ERROR:       return "ERROR";
-        default:             return "?";
+        case SM_IDLE:          return "IDLE";
+        case SM_CHASSIS_X:     return "CHASSIS_X";
+        case SM_BEAM_Y:        return "BEAM_Y";
+        case SM_UPDOWN_Z:      return "UPDOWN_Z";
+        case SM_CLAW:          return "CLAW";
+        case SM_UPDOWN_LIFT:   return "UPDOWN_LIFT";
+        case SM_BEAM_PICK:     return "BEAM_PICK";
+        case SM_CHASSIS_PICK:  return "CHASSIS_PICK";
+        case SM_UPDOWN_PICK:   return "UPDOWN_PICK";
+        case SM_CLAW_GRAB:     return "CLAW_GRAB";
+        case SM_CHASSIS_DROP:  return "CHASSIS_DROP";
+        case SM_BEAM_DROP:     return "BEAM_DROP";
+        case SM_UPDOWN_DROP:   return "UPDOWN_DROP";
+        case SM_CLAW_RELEASE:  return "CLAW_RELEASE";
+        case SM_DONE:          return "DONE";
+        case SM_ERROR:         return "ERROR";
+        default:               return "?";
     }
 }

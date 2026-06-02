@@ -120,22 +120,36 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   //osDelay(3000);
- Usart_Start();
+  Usart_Start();
   DJI_Start();
-  osDelay(1000);
-  *pChassis_distance = 300;
-  *pBeam_distance = 0;
-    *pUpdown_distance = 0;
-
-
+  FT_Start();
   
-  // osDelay(3000);
-  // *pUpdown_distance = 720;
 
+   osDelay(1000);
+  *pUpdown_distance = 750;
+  osDelay(500);
+  *pBeam_distance = 750;
+   osDelay(700);
+  *pChassis_distance = 48;
+  osDelay(3000);
+  *pUpdown_distance = 302;
+  osDelay(1000);
+  *pFT_phy = 1650;
+  osDelay(2000);
+  *pUpdown_distance = 750;
+   osDelay(1000);
+   *pChassis_distance = 3755;
+  osDelay(500);
+   *pBeam_distance = -750; 
+  osDelay(5000);
+  *pUpdown_distance = 302;
+  *pFT_phy = 2000;
+  
   for(;;)
   {    
-    printf("%.2f\n",hDJI[0].speedPID.output);
-
+    
+    //printf("%.2f\n",hDJI[0].speedPID.output);
+    printf("%.2f\n",hDJI[5].AxisData.AxisAngle_inDegree);
     osDelay(100);
   }
   /* USER CODE END StartDefaultTask */

@@ -62,6 +62,9 @@
 #define SMS_STS_PRESENT_CURRENT_H 70
 #define STS_RELOADVALUE 4095
 
+
+#define FT_INIT 2600
+
 typedef enum{
     TopClaw = 0,
     BottomClaw = 1

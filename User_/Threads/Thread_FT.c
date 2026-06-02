@@ -8,12 +8,12 @@ void FT_Function(void *argument)
 {
   /* USER CODE BEGIN ITS_Function */
   FT_Init();
-  FT_phy = 800;
+  FT_phy = FT_INIT;
+
 
   /* Infinite loop */
   for(;;)
   {
-
     WritePosEx(&h_FT_STS[0],FT_phy,20,50);
     osDelay(50);
   }

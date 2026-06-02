@@ -9,4 +9,6 @@ void positionServo_chassis(float ref, DJI_t *motor);
 
 void speedServo(float ref, DJI_t * motor);
 
+void PID_Calc_P(PID_t *pid);
+
 #endif

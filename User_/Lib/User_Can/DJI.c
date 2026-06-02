@@ -22,14 +22,14 @@ void DJI_Init()
         hDJI[i].speedPID.KP = 12;
         hDJI[i].speedPID.KI = 0.2;
         hDJI[i].speedPID.KD = 5;
-        hDJI[i].speedPID.outputMax = 6000
+        hDJI[i].speedPID.outputMax = 2500
 		;  //speed limit
 		//posPID
 
-		hDJI[i].posPID.KP = 60.0f;
+		hDJI[i].posPID.KP = 10.0f;
         hDJI[i].posPID.KI = 0.0f;
-        hDJI[i].posPID.KD = 30.0f;
-        hDJI[i].posPID.outputMax = 6000;
+        hDJI[i].posPID.KD = 15.0f;
+        hDJI[i].posPID.outputMax = 4000;
 	 }
 	 //升降结构的pid参数
 	 else if(i == 5)
@@ -38,23 +38,22 @@ void DJI_Init()
         hDJI[i].speedPID.KP = 12;
         hDJI[i].speedPID.KI = 0.2;
         hDJI[i].speedPID.KD = 5;
-        hDJI[i].speedPID.outputMax = 4000
+        hDJI[i].speedPID.outputMax = 3000
 		;  //speed limit
 		//posPID
 
-		hDJI[i].posPID.KP = 60.0f;
-        hDJI[i].posPID.KI = 0.5f;
-        hDJI[i].posPID.KD = 0.0f;
-        hDJI[i].posPID.outputMax = 4000;
+		hDJI[i].posPID.KP = 30.0f;
+        hDJI[i].posPID.KI = 0.0f;
+        hDJI[i].posPID.KD = 10.0f;
+        hDJI[i].posPID.outputMax = 3000;
 
 		//hDJI[i].posPID.outputMin = 1500;
 	 }
-	 //其余电机共用的pid
-	 else
+	 //云台pid
+	 else if(i == 2)
 	 {
-			//PID初始化
+		//PID初始化
 		//可能不同电机需要设定不同的参数
-
 		//speedPID
         hDJI[i].speedPID.KP = 12;
         hDJI[i].speedPID.KI = 0.2;
@@ -62,16 +61,28 @@ void DJI_Init()
         hDJI[i].speedPID.outputMax = 2000
 		;  //speed limit
 		//posPID
-
+		hDJI[i].posPID.KP = 40.0f;
+        hDJI[i].posPID.KI = 0.0f;
+        hDJI[i].posPID.KD = 0.0f;
+        hDJI[i].posPID.outputMax = 4000;
+		//hDJI[i].posPID.outputMin = 1500;
+	 }
+	 else{
+		//PID初始化
+		//可能不同电机需要设定不同的参数
+		//speedPID
+        hDJI[i].speedPID.KP = 12;
+        hDJI[i].speedPID.KI = 0.2;
+        hDJI[i].speedPID.KD = 5;
+        hDJI[i].speedPID.outputMax = 2000
+		;  //speed limit
+		//posPID
 		hDJI[i].posPID.KP = 80.0f;
         hDJI[i].posPID.KI = 2.0f;
         hDJI[i].posPID.KD = 0.0f;
         hDJI[i].posPID.outputMax = 4000;
-
 		//hDJI[i].posPID.outputMin = 1500;
 	 }
-
-
 
 		if( hDJI[i].motorType == M3508 ){
 			hDJI[i].reductionRate = 3591.0f/187.0f;//2006减速比为36 3508减速比约为19
