@@ -123,28 +123,32 @@ void StartDefaultTask(void *argument)
   Usart_Start();
   DJI_Start();
   FT_Start();
+  SM_Start();
   
 
    osDelay(1000);
-  *pUpdown_distance = 750;
-  osDelay(500);
-  *pBeam_distance = 750;
-   osDelay(700);
-  *pChassis_distance = 48;
-  osDelay(3000);
-  *pUpdown_distance = 302;
-  osDelay(1000);
-  *pFT_phy = 1650;
-  osDelay(2000);
-  *pUpdown_distance = 750;
-   osDelay(1000);
-   *pChassis_distance = 3755;
-  osDelay(500);
-   *pBeam_distance = -750; 
-  osDelay(5000);
-  *pUpdown_distance = 302;
-  *pFT_phy = 2000;
+   //SM_StartMission(48,3755,750,-750,750,302,302,1650,2100);
+
+   SM_StartMission(302,3534,0,1300,750,500,500,1650,2100);
   
+   //*pUpdown_distance = 750;
+  // osDelay(500);
+  //  osDelay(700);
+  // *pChassis_distance = 48;
+  // osDelay(3000);
+  // *pUpdown_distance = 302;
+  // osDelay(1000);
+  // *pFT_phy = 1650;
+  // osDelay(2000);
+  // *pUpdown_distance = 750;
+  //  osDelay(1000);
+  //  *pChassis_distance = 3755;
+  // osDelay(500);
+  //  *pBeam_distance = -750; 
+  // osDelay(5000);
+  // *pUpdown_distance = 302;
+  // *pFT_phy = 2000;
+
   for(;;)
   {    
     

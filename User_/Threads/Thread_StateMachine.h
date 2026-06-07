@@ -53,6 +53,7 @@ typedef struct {
     float     target_z;
     int16_t   target_claw;
     // 状态管理
+    uint8_t   lift_stage;      // 0=初始升起→取货, 1=夹取后升起→卸货
     uint8_t   state_entered;
     uint32_t  state_entry_tick;
     uint32_t  timeout_ms;
