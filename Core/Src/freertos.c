@@ -56,7 +56,7 @@ uint8_t command[] = { 0xFF, 0xFF, 0x01, 0x09, 0x03, 0x2A, 0x00, 0x08, 0x00, 0x00
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 128 * 4,
+  .stack_size = 128 * 10,
   .priority = (osPriority_t) osPriorityNormal,
 };
 
@@ -120,33 +120,21 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   //osDelay(3000);
-  Usart_Start();
-  DJI_Start();
-  FT_Start();
-  SM_Start();
+ // Usart_Start();
+  // DJI_Start();
+  // FT_Start();
+  // SM_Start();
   
   osDelay(1000);
-  SM_StartMission(&mission);
-  // osDelay(500);
-  //  osDelay(700);
-  // *pChassis_distance = 48;
-  // osDelay(3000);
-  // *pUpdown_distance = 302;
-  // osDelay(1000);
-  // *pFT_phy = 1650;
-  // osDelay(2000);
-  // *pUpdown_distance = 750;
-  //  osDelay(1000);
-  //  *pChassis_distance = 3755;
-  // osDelay(500);
-  //  *pBeam_distance = -750; 
-  // osDelay(5000);
-  // *pUpdown_distance = 302;
-  // *pFT_phy = 2000;
-
+//  SM_StartMission(&mission);
+  printf("ready\n");
+  
+  //*pChassis_distance = 48;
+  //Chassis_distance = 48;
+ 
   for(;;)
   {    
- 
+    
     osDelay(100);
   }
   /* USER CODE END StartDefaultTask */

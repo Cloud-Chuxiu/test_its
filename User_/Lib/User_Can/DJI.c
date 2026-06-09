@@ -99,53 +99,53 @@ void DJI_Init()
 
 static uint32_t TxMailbox;
 
-void CanTransmit_DJI_1234(CAN_HandleTypeDef *hcanx, int16_t cm1_iq, int16_t cm2_iq, int16_t cm3_iq, int16_t cm4_iq){
-	CAN_TxHeaderTypeDef TxMessage;
+void CanTransmit_DJI_1234(CAN_HandleTypeDef *hcanx, int16_t cm1_iq, int16_t cm2_iq, int16_t cm3_iq, int16_t cm4_iq)
+{
+    CAN_TxHeaderTypeDef TxMessage;
 
-	TxMessage.DLC=0x08;
-	TxMessage.StdId=0x200;
-	TxMessage.IDE=CAN_ID_STD;
-	TxMessage.RTR=CAN_RTR_DATA;
+    TxMessage.DLC   = 0x08;
+    TxMessage.StdId = 0x200;
+    TxMessage.IDE   = CAN_ID_STD;
+    TxMessage.RTR   = CAN_RTR_DATA;
 
-	uint8_t TxData[8];
-	TxData[0] = (uint8_t)(cm1_iq >> 8);
-	TxData[1] = (uint8_t)cm1_iq;
-	TxData[2] = (uint8_t)(cm2_iq >> 8);
-	TxData[3] = (uint8_t)cm2_iq;
-	TxData[4] = (uint8_t)(cm3_iq >> 8);
-	TxData[5] = (uint8_t)cm3_iq;
-	TxData[6] = (uint8_t)(cm4_iq >> 8);
-	TxData[7] = (uint8_t)cm4_iq;
-	while(HAL_CAN_GetTxMailboxesFreeLevel(hcanx) == 0) ;
-	if(HAL_CAN_AddTxMessage(hcanx,&TxMessage,TxData,&TxMailbox)!=HAL_OK)
-	{
-		 Error_Handler();       //如果CAN信息发送失败则进入死循环
-	}
+    uint8_t TxData[8];
+    TxData[0] = (uint8_t)(cm1_iq >> 8);
+    TxData[1] = (uint8_t)cm1_iq;
+    TxData[2] = (uint8_t)(cm2_iq >> 8);
+    TxData[3] = (uint8_t)cm2_iq;
+    TxData[4] = (uint8_t)(cm3_iq >> 8);
+    TxData[5] = (uint8_t)cm3_iq;
+    TxData[6] = (uint8_t)(cm4_iq >> 8);
+    TxData[7] = (uint8_t)cm4_iq;
+    while (HAL_CAN_GetTxMailboxesFreeLevel(hcanx) == 0);
+    if (HAL_CAN_AddTxMessage(hcanx, &TxMessage, TxData, &TxMailbox) != HAL_OK) {
+        Error_Handler(); // 如果CAN信息发送失败则进入死循环
+    }
 }
 
-void CanTransmit_DJI_5678(CAN_HandleTypeDef *hcanx, int16_t cm5_iq, int16_t cm6_iq, int16_t cm7_iq, int16_t cm8_iq){
-	CAN_TxHeaderTypeDef TxMessage;
+void CanTransmit_DJI_5678(CAN_HandleTypeDef *hcanx, int16_t cm5_iq, int16_t cm6_iq, int16_t cm7_iq, int16_t cm8_iq)
+{
+    CAN_TxHeaderTypeDef TxMessage;
 
-	TxMessage.DLC=0x08;
-	TxMessage.StdId=0x1FF;
-	TxMessage.IDE=CAN_ID_STD;
-	TxMessage.RTR=CAN_RTR_DATA;
+    TxMessage.DLC   = 0x08;
+    TxMessage.StdId = 0x1FF;
+    TxMessage.IDE   = CAN_ID_STD;
+    TxMessage.RTR   = CAN_RTR_DATA;
 
-	uint8_t TxData[8];
-	TxData[0] = (uint8_t)(cm5_iq >> 8);
-	TxData[1] = (uint8_t)cm5_iq;
-	TxData[2] = (uint8_t)(cm6_iq >> 8);
-	TxData[3] = (uint8_t)cm6_iq;
-	TxData[4] = (uint8_t)(cm7_iq >> 8);
-	TxData[5] = (uint8_t)cm7_iq;
-	TxData[6] = (uint8_t)(cm8_iq >> 8);
-	TxData[7] = (uint8_t)cm8_iq;
+    uint8_t TxData[8];
+    TxData[0] = (uint8_t)(cm5_iq >> 8);
+    TxData[1] = (uint8_t)cm5_iq;
+    TxData[2] = (uint8_t)(cm6_iq >> 8);
+    TxData[3] = (uint8_t)cm6_iq;
+    TxData[4] = (uint8_t)(cm7_iq >> 8);
+    TxData[5] = (uint8_t)cm7_iq;
+    TxData[6] = (uint8_t)(cm8_iq >> 8);
+    TxData[7] = (uint8_t)cm8_iq;
 
-	while(HAL_CAN_GetTxMailboxesFreeLevel(hcanx) == 0) ;
-	if(HAL_CAN_AddTxMessage(hcanx,&TxMessage,TxData,&TxMailbox)!=HAL_OK)
-	{
-		 Error_Handler();       //如果CAN信息发送失败则进入死循环
-	}
+    while (HAL_CAN_GetTxMailboxesFreeLevel(hcanx) == 0);
+    if (HAL_CAN_AddTxMessage(hcanx, &TxMessage, TxData, &TxMailbox) != HAL_OK) {
+        Error_Handler(); // 如果CAN信息发送失败则进入死循环
+    }
 }
 
 //上传与处理DJI电机反馈信息
