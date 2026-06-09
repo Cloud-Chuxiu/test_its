@@ -31,6 +31,7 @@
 #include "beam.h"
 #include <stdio.h>
 #include "updown.h"
+#include "Action.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -115,6 +116,7 @@ int main(void)
     hDJI[i].motorType = M3508;
   }
   DJI_Init();
+  StateMachine_Init();
   HAL_Delay(3000); //等待各模块初始化
   /* USER CODE END 2 */
 

@@ -125,13 +125,8 @@ void StartDefaultTask(void *argument)
   FT_Start();
   SM_Start();
   
-
-   osDelay(1000);
-   //SM_StartMission(48,3755,750,-750,750,302,302,1650,2100);
-
-   SM_StartMission(302,3534,0,1300,750,500,500,1650,2100);
-  
-   //*pUpdown_distance = 750;
+  osDelay(1000);
+  SM_StartMission(&mission);
   // osDelay(500);
   //  osDelay(700);
   // *pChassis_distance = 48;
@@ -151,9 +146,7 @@ void StartDefaultTask(void *argument)
 
   for(;;)
   {    
-    
-    //printf("%.2f\n",hDJI[0].speedPID.output);
-    printf("%.2f\n",hDJI[5].AxisData.AxisAngle_inDegree);
+ 
     osDelay(100);
   }
   /* USER CODE END StartDefaultTask */

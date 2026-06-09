@@ -43,8 +43,8 @@ void DJI_Start()
   osThreadId_t DJI_Handle;
   const osThreadAttr_t DJI_attributes = {
     .name       = "DJI",
-    .stack_size = 128 * 4,
-    .priority   = (osPriority_t)osPriorityLow,
+    .stack_size = 128 * 16,
+    .priority   = (osPriority_t)osPriorityAboveNormal,
   };
   osThreadNew(DJI_Function, NULL, &DJI_attributes);
 }
