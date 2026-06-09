@@ -146,7 +146,6 @@ void StartDefaultTask(void *argument)
 
   for(;;)
   {    
- 
     osDelay(100);
   }
   /* USER CODE END StartDefaultTask */

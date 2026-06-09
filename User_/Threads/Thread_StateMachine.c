@@ -111,7 +111,7 @@ void StateMachine_Function(void *argument)
         /* 1. 升降升起 */
         case SM_UPDOWN_LIFT:
             if (sm.state_entered) {
-                //printf("[SM] R%d updown lift %.1f\r\n", r+1, sm.up_lift);
+                printf("[SM] R%d updown lift %.1f\r\n", r+1, sm.up_lift);
                 sm.state_entered = 0;
             }
             sm.target_z = sm.up_lift;
@@ -127,7 +127,7 @@ void StateMachine_Function(void *argument)
         /* 2. 横梁→取货侧 */
         case SM_BEAM_PICK:
             if (sm.state_entered) {
-                //printf("[SM] R%d beam pick %.1f\r\n", r+1, sm.beam_pick[r]);
+                printf("[SM] R%d beam pick %.1f\r\n", r+1, sm.beam_pick[r]);
                 sm.state_entered = 0;
             }
             sm.target_y = sm.beam_pick[r];
@@ -138,7 +138,7 @@ void StateMachine_Function(void *argument)
         /* 3. 底盘→取货区 */
         case SM_CHASSIS_PICK:
             if (sm.state_entered) {
-             //   printf("[SM] R%d chassis pick %.1f mm\r\n", r+1, sm.pick_x[r]);
+               printf("[SM] R%d chassis pick %.1f mm\r\n", r+1, sm.pick_x[r]);
                 sm.state_entered = 0;
             }
             sm.target_x = sm.pick_x[r];

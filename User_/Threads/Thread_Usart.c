@@ -14,7 +14,9 @@ void Usart_Function(void *argument)
       UartFlag[0] = 0;
       hDJI[0].AxisData.lidar_distance = Lidar1.distance_aver;
       //printf("%.2f\n",hDJI[0].AxisData.lidar_distance);
-
+       //printf("%.2f\n",hDJI[5].AxisData.AxisAngle_inDegree);
+      //printf("%f\n",hDJI[5].speedPID.output);
+      
     }
       osDelay(1);
   }
