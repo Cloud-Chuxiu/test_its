@@ -34,7 +34,10 @@ typedef struct {
     float     beam_drop[SM_ROUNDS];
     float     up_pick[SM_ROUNDS];
     float     up_drop[SM_ROUNDS];
-    float     via_gap[SM_ROUNDS];    // 避障中继点底盘位置
+    float     via_gap1[SM_ROUNDS];  // 避障中继点底盘位置
+    float     via_gap2[SM_ROUNDS];    
+    float     beam_start[SM_ROUNDS];//起步横梁位
+    float     beam_gap[SM_ROUNDS]; //避障横梁目的
     // 每轮相同的坐标
     float     up_lift;
     int16_t   claw_grab;
