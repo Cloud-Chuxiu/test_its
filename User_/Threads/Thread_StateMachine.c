@@ -9,6 +9,7 @@ StateMachine_t sm = {
     .beam_drop       = {0},
     .up_pick         = {0},
     .up_drop         = {0},
+    .via_gap         = {0},
     .up_lift         = 0,
     .claw_grab       = 0,
     .claw_release    = 0,
@@ -170,14 +171,18 @@ void StateMachine_Function(void *argument)
             }
             SM_CheckTimeout(); break;
 
-        /* 6. 底盘→卸货区 */
+        /* 6. 底盘→卸货区（经过避障中继点自动触发横梁摆动） */
         case SM_CHASSIS_DROP:
             if (sm.state_entered) {
-              //  printf("[SM] R%d chassis drop %.1f mm\r\n", r+1, sm.drop_x[r]);
+                printf("[SM] R%d chassis drop %.1f, via %.1f\r\n", r+1, sm.drop_x[r], sm.via_gap[r]);
                 sm.state_entered = 0;
             }
             sm.target_x = sm.drop_x[r];
             *pChassis_distance = sm.drop_x[r];
+            // 底盘到达避障中继点 → 触发横梁摆动（底盘不停）
+            if (fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap[r]) < 100) {
+                *pBeam_distance = sm.beam_drop[r];
+            }
             if (Chassis_Done()) SM_EnterState(SM_BEAM_DROP, 30000);
             SM_CheckTimeout(); break;
 
