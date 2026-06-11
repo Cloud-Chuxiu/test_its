@@ -134,11 +134,12 @@ void StartDefaultTask(void *argument)
  
   for(;;)
   {    
+<<<<<<< HEAD
     
+=======
+>>>>>>> temp-save
     osDelay(100);
   }
-  /* USER CODE END StartDefaultTask */
-}
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
