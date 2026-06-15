@@ -26,9 +26,9 @@ void DJI_Init()
 		;  //speed limit
 		//posPID
 
-		hDJI[i].posPID.KP = 10.0f;
+		hDJI[i].posPID.KP = 8.0f;
         hDJI[i].posPID.KI = 0.0f;
-        hDJI[i].posPID.KD = 15.0f;
+        hDJI[i].posPID.KD = 0.0f;
         hDJI[i].posPID.outputMax = 4000;
 	 }
 	 //升降结构的pid参数

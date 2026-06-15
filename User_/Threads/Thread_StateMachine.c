@@ -122,7 +122,6 @@ void StateMachine_Function(void *argument)
             *pUpdown_distance = sm.up_lift;
             *pBeam_distance = sm.beam_start[r];
 
-
             if (Updown_Done()) {
                 if (sm.lift_stage)
                     SM_EnterState(SM_CHASSIS_DROP, 20000);
@@ -188,7 +187,7 @@ void StateMachine_Function(void *argument)
             *pChassis_distance = sm.drop_x[r];
             // 底盘到达避障中继点 → 触发横梁摆动（底盘不停）
             if (fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap1[r]) < 100) {
-                *pBeam_distance = sm.beam_drop[r];
+                *pBeam_distance = sm.beam_gap[r];
             }
             if (Chassis_Done()) SM_EnterState(SM_BEAM_DROP, 30000);
             SM_CheckTimeout(); break;
@@ -231,6 +230,9 @@ void StateMachine_Function(void *argument)
               //  printf("[SM] R%d done\r\n", r+1);
                 sm.state_entered = 0;
             }
+            *pFT_phy = 2600; //夹爪初始化
+            
+
             sm.round++;
             if (sm.round < SM_ROUNDS) {
                 sm.lift_stage = 0;

@@ -9,24 +9,24 @@ void StateMachine_Init(void)
     mission.pick_x[0]     = 48;
     mission.drop_x[0]     = 3755;
     mission.beam_pick[0]  = 750;
-    mission.beam_drop[0]  = -750;
-    mission.up_pick[0]    = 302;
+    mission.beam_drop[0]  = -710;
+    mission.up_pick[0]    = 260;
     mission.up_drop[0]    = 302;
 
     // ===== R1：第二趟 =====
-    mission.pick_x[1]     = 302;    
+    mission.pick_x[1]     = 285;    
     mission.drop_x[1]     = 3755;
-    mission.beam_pick[1]  = 0;
-    mission.beam_drop[1]  = 750;
-    mission.up_pick[1]    = 600;
+    mission.beam_pick[1]  = -20;
+    mission.beam_drop[1]  = 550;
+    mission.up_pick[1]    = 500;
     mission.up_drop[1]    = 302;
 
     // ===== R2：第三趟 =====
     mission.pick_x[2]     = 48;    
     mission.drop_x[2]     = 3755;
-    mission.beam_pick[2]  = -750;
+    mission.beam_pick[2]  = -840;
     mission.beam_drop[2]  = 0;
-    mission.up_pick[2]    = 400;
+    mission.up_pick[2]    = 380;
     mission.up_drop[2]    = 302;
 
     // ===== 避障中继点（底盘LIDAR位置，经过此处时横梁摆动）=====
@@ -46,7 +46,9 @@ void StateMachine_Init(void)
     mission.beam_start[2]   = -750; 
 
     //======横梁避障目的 ========
-    
+    mission.beam_gap[0]     = -750;
+    mission.beam_gap[1]     = 750;
+    mission.beam_gap[2]     = 750;
 
 
 
@@ -70,6 +72,7 @@ void SM_StartMission(const Mission_t *m)
         sm.via_gap1[i]  = m->via_gap1[i];
         sm.via_gap2[i]  = m->via_gap2[i];
         sm.beam_start[i]= m->beam_start[i];
+        sm.beam_gap[i]  = m->beam_gap[i];
     }
     sm.up_lift      = m->up_lift;
     sm.claw_grab    = m->claw_grab;

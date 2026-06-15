@@ -15,7 +15,8 @@ typedef struct {
     float   up_drop[SM_ROUNDS];    // 各轮卸货下降高度
     float   via_gap1[SM_ROUNDS];    // 各轮避障中继点底盘位置
     float   via_gap2[SM_ROUNDS];
-    float   beam_start[SM_ROUNDS];
+    float   beam_start[SM_ROUNDS]; //起步横梁位
+    float   beam_gap[SM_ROUNDS];   //横梁避障目的
     float   up_lift;               // 升起高度
     int16_t claw_grab;             // 夹取角度
     int16_t claw_release;          // 张开角度
