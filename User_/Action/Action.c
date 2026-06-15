@@ -30,7 +30,7 @@ void StateMachine_Init(void)
     mission.up_drop[2]    = 302;
 
     // ===== 避障中继点（底盘LIDAR位置，经过此处时横梁摆动）=====
-    mission.via_gap1[0]     = 800;
+    mission.via_gap1[0]     = 700;
     mission.via_gap1[1]     = 800;
     mission.via_gap1[2]     = 800;
 
