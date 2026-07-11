@@ -17,15 +17,12 @@ void DJI_Init()
 		hDJI[i].motorType = M3508;
         hDJI[i].reductionRate = 3591.0f / 187.0f;
         hDJI[i].encoder_resolution = 8192.0f;
-
         //speedPID
         hDJI[i].speedPID.KP = 12;
         hDJI[i].speedPID.KI = 0.2;
         hDJI[i].speedPID.KD = 5;
-        hDJI[i].speedPID.outputMax = 2500
-		;  //speed limit
+        hDJI[i].speedPID.outputMax = 4000;  //speed limit
 		//posPID
-
 		hDJI[i].posPID.KP = 8.0f;
         hDJI[i].posPID.KI = 0.0f;
         hDJI[i].posPID.KD = 0.0f;
@@ -58,7 +55,7 @@ void DJI_Init()
         hDJI[i].speedPID.KP = 12;
         hDJI[i].speedPID.KI = 0.2;
         hDJI[i].speedPID.KD = 5;
-        hDJI[i].speedPID.outputMax = 2000
+        hDJI[i].speedPID.outputMax = 3000
 		;  //speed limit
 		//posPID
 		hDJI[i].posPID.KP = 40.0f;
