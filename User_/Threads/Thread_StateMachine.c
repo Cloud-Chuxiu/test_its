@@ -138,6 +138,9 @@ void StateMachine_Function(void *argument)
             }
             sm.target_x = sm.pick_x[r];
             *pChassis_distance = sm.pick_x[r];
+             if (fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap1[r]) < 100) {
+                *pBeam_distance = sm.beam_pick[r];
+            }
             if (Chassis_Done()) SM_EnterState(SM_BEAM_PICK, 30000);
             SM_CheckTimeout(); break;
         
@@ -188,6 +191,9 @@ void StateMachine_Function(void *argument)
             // 底盘到达避障中继点 → 触发横梁摆动（底盘不停）
             if (fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap1[r]) < 100) {
                 *pBeam_distance = sm.beam_gap[r];
+            }
+            if(fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap2[r]) < 100){
+                *pBeam_distance = sm.beam_drop[r];
             }
             if (Chassis_Done()) SM_EnterState(SM_BEAM_DROP, 30000);
             SM_CheckTimeout(); break;

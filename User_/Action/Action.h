@@ -22,6 +22,12 @@ typedef struct {
     int16_t claw_release;          // 张开角度
 } Mission_t;
 
+typedef struct {
+    float box_x[5];
+    float box_y[5];
+} Box_t;
+
+
 extern Mission_t mission;
 
 void StateMachine_Init(void);

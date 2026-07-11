@@ -3,6 +3,26 @@
 
 Mission_t mission;
 
+Box_t box_pos;
+
+void Box_Init()
+{
+    box_pos.box_x[0] = 0;
+    box_pos.box_y[0] = 0;
+    box_pos.box_x[1] = 0;
+    box_pos.box_y[1] = 0;
+    box_pos.box_x[2] = 0;
+    box_pos.box_y[2] = 0;
+    box_pos.box_x[3] = 0;
+    box_pos.box_y[3] = 0;
+    box_pos.box_x[4] = 0;
+    box_pos.box_y[4] = 0;
+}
+
+
+
+
+
 void StateMachine_Init(void)
 {
     // ===== R0：第一趟 =====
