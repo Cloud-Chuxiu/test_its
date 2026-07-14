@@ -18,6 +18,7 @@ void DJI_Function(void *argument)
     {
       positionServo_chassis(Chassis_distance, &hDJI[0]);
     }
+    //positionServo_Beam(Beam_distance, &hDJI[2]);
     positionServo(Beam_distance, &hDJI[2]);
     positionServo(Updown_distance, &hDJI[5]);
 

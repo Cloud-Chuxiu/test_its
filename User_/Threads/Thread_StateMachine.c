@@ -34,7 +34,7 @@ static uint8_t Chassis_Done(void) {
 }
 static uint8_t Beam_Done(void) {
     return (hDJI[2].speedPID.output == 0)
-        && (fabs(hDJI[2].AxisData.AxisAngle_inDegree - sm.target_y) < 3.0f);
+        && (fabs(hDJI[2].AxisData.AxisAngle_inDegree - sm.target_y) < 5.0f);
 }
 static uint8_t Updown_Done(void) {
     return (hDJI[5].speedPID.output == 0)
@@ -115,7 +115,7 @@ void StateMachine_Function(void *argument)
         /* 1. 升降升起 */
         case SM_UPDOWN_LIFT:
             if (sm.state_entered) {
-              //  printf("[SM] R%d updown lift %.1f\r\n", r+1, sm.up_lift);
+               printf("[SM] R%d updown lift %.1f\r\n", r+1, sm.up_lift);
                 sm.state_entered = 0;
             }
             sm.target_z = sm.up_lift;
@@ -133,7 +133,7 @@ void StateMachine_Function(void *argument)
         /* 2. 底盘→取货区 */
         case SM_CHASSIS_PICK:
             if (sm.state_entered) {
-             //  printf("[SM] R%d chassis pick %.1f mm\r\n", r+1, sm.pick_x[r]);
+              printf("[SM] R%d chassis pick %.1f mm\r\n", r+1, sm.pick_x[r]);
                 sm.state_entered = 0;
             }
             sm.target_x = sm.pick_x[r];
@@ -147,7 +147,7 @@ void StateMachine_Function(void *argument)
             /* 3. 横梁→取货侧 */
         case SM_BEAM_PICK:
             if (sm.state_entered) {
-              //  printf("[SM] R%d beam pick %.1f\r\n", r+1, sm.beam_pick[r]);
+               printf("[SM] R%d beam pick %.1f\r\n", r+1, sm.beam_pick[r]);
                 sm.state_entered = 0;
             }
             sm.target_y = sm.beam_pick[r];
@@ -159,7 +159,7 @@ void StateMachine_Function(void *argument)
         /* 4. 升降下降取货 */
         case SM_UPDOWN_PICK:
             if (sm.state_entered) {
-              //  printf("[SM] R%d updown pick %.1f\r\n", r+1, sm.up_pick[r]);
+             printf("[SM] R%d updown pick %.1f\r\n", r+1, sm.up_pick[r]);
                 sm.state_entered = 0;
             }
             sm.target_z = sm.up_pick[r];
