@@ -128,10 +128,10 @@ void positionServo_chassis(float ref, DJI_t *motor)
     /* ---- 接近目标时线性减速 ---- */
     float error = fabs(fused_pos - ref);
     float decel_limit = CHASSIS_MAX;    // 减速上限（默认全输出）
-    if (error < 100.0f) {
-        decel_limit = CHASSIS_MAX * (error / 100.0f);
-        if (decel_limit < 1500.0f) decel_limit = 1500.0f;
-    }
+    // if (error < 600.0f) {
+    //     decel_limit = CHASSIS_MAX * (error / 600.0f);
+    //     if (decel_limit < 1500.0f) decel_limit = 1500.0f;
+    // }
 
     float accel_limit = CHASSIS_MAX;    // 加速上限（默认全输出）
     if (dist_start < 200.0f) {

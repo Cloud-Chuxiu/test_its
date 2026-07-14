@@ -14,10 +14,10 @@ void Usart_Function(void *argument)
       STP_23L_Decode(Rxbuffer_1, &Lidar1);
       UartFlag[0] = 0;
       hDJI[0].AxisData.lidar_distance = Lidar1.distance_aver;
-      printf("%.2f\n",hDJI[0].AxisData.lidar_distance);
-     // printf("%.2f\n",hDJI[2].AxisData.AxisAngle_inDegree);
-    //printf("%.2f\n",hDJI[5].AxisData.AxisAngle_inDegree);
-    //printf("%f\n",hDJI[5].speedPID.output);
+      //printf("%.2f\n",hDJI[0].AxisData.lidar_distance);
+      //printf("%.2f\n",hDJI[2].AxisData.AxisAngle_inDegree);
+      //printf("%.2f\n",hDJI[5].AxisData.AxisAngle_inDegree);
+      //printf("%f\n",hDJI[5].speedPID.output);
     }
       osDelay(1);
   }
