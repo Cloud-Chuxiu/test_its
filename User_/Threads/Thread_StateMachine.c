@@ -138,7 +138,7 @@ void StateMachine_Function(void *argument)
             }
             sm.target_x = sm.pick_x[r];
             *pChassis_distance = sm.pick_x[r];
-             if (fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap1[r]) < 100) {
+             if (fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap1[r]) < 200) {
                 *pBeam_distance = sm.beam_pick[r];
             }
             if (Chassis_Done()) SM_EnterState(SM_BEAM_PICK, 30000);

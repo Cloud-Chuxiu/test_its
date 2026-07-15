@@ -8,16 +8,20 @@ void Usart_Function(void *argument)
   printf("u6ready\r\n");
   uint32_t tick = 0;
   HAL_UART_Receive_IT(&huart1, usart1_rx, 1);
+  HAL_UART_Receive_IT(&huart3, usart3_rx, 1);
   /* Infinite loop */
   for (;;) {
     if (UartFlag[0]) {
       STP_23L_Decode(Rxbuffer_1, &Lidar1);
       UartFlag[0] = 0;
       hDJI[0].AxisData.lidar_distance = Lidar1.distance_aver;
-      //printf("%.2f\n",hDJI[0].AxisData.lidar_distance);
-      //printf("%.2f\n",hDJI[2].AxisData.AxisAngle_inDegree);
-      //printf("%.2f\n",hDJI[5].AxisData.AxisAngle_inDegree);
-      //printf("%f\n",hDJI[5].speedPID.output);
+      printf("%.2f\n",hDJI[0].AxisData.lidar_distance);
+    }
+    if (UartFlag[2]) {
+      STP_23L_Decode(Rxbuffer_3, &Lidar2);
+      UartFlag[2] = 0;
+      hDJI[2].AxisData.lidar_distance = Lidar2.distance_aver;
+     // printf("%.2f\n",hDJI[2].AxisData.lidar_distance);
     }
       osDelay(1);
   }
@@ -38,6 +42,7 @@ void Usart_Start()
 void Usart_start()
 {
   HAL_UART_Receive_IT(&huart1, usart1_rx, 1);
+  HAL_UART_Receive_IT(&huart3, usart3_rx, 1);
 }
 
 

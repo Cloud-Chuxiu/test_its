@@ -90,7 +90,7 @@ void positionServo_Beam(float ref, DJI_t *motor)
         // output与error方向相反（刹车/回退）→ 不限速，自由制动
     }
 
-   if (s_abs_err < 3.0f) motor->speedPID.output = 0;
+  // if (s_abs_err < 3.0f) motor->speedPID.output = 0;
 }
 
 extern volatile uint32_t usart1_frame_cnt;

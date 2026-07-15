@@ -69,7 +69,34 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     }
     HAL_UART_Receive_IT(&huart1, usart1_rx, 1);
     }
-    
+
+    if (huart->Instance == USART3) {
+        static uint16_t u3state = 0;
+        static uint16_t crc3    = 0;
+        uint8_t tmp3 = usart3_rx[0];
+
+        if (u3state < 4) {
+            if (tmp3 == 0xAA) {
+                Rxbuffer_3[u3state] = tmp3;
+                u3state++;
+            } else {
+                u3state = 0;
+            }
+        } else if (u3state < 194) {
+            Rxbuffer_3[u3state] = tmp3;
+            u3state++;
+            crc3 += tmp3;
+        } else if (u3state == 194) {
+            Rxbuffer_3[u3state] = tmp3;
+            if (tmp3 == crc3 % 256) {
+                UartFlag[2] = 1;
+            }
+            u3state = 0;
+            crc3    = 0;
+        }
+        HAL_UART_Receive_IT(&huart3, usart3_rx, 1);
+    }
+
 }
 // void HAL_UART_ErrorCallback(UART_HandleTypeDef *uartHandle)
 // {
