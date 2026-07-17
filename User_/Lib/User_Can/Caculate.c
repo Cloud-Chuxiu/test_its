@@ -60,37 +60,58 @@ void positionServo(float ref, DJI_t * motor){
 }
 
 
-//横梁位置伺服（编码器反馈 + 位置误差线性减速）
+//横梁位置伺服（LIDAR2+编码器融合反馈，位置式PID）
+extern volatile uint32_t usart3_frame_cnt;
+
 void positionServo_Beam(float ref, DJI_t *motor)
 {
+    static float fused_pos    = 0;
+    static float enc_latch    = 0;
+    static uint32_t last_fr   = 0;
+
+    if (usart3_frame_cnt == 0) return;  // 等待首帧LIDAR
+
+    /* ---- 编码器插值融合 ---- */
+    if (usart3_frame_cnt != last_fr) {
+        last_fr   = usart3_frame_cnt;
+        fused_pos = motor->AxisData.lidar_distance;
+        enc_latch = motor->AxisData.AxisAngle_inDegree;
+    } else {
+        float enc_delta = motor->AxisData.AxisAngle_inDegree - enc_latch;
+        fused_pos += enc_delta * BEAM_MM_PER_DEG;
+        enc_latch  = motor->AxisData.AxisAngle_inDegree;
+    }
+
+    /* ---- 目标变化 → 积分清零 ---- */
     static float last_ref = 0;
-    if (fabs(ref - last_ref) > 0.5f) {       // 目标变化 → 积分清零，防windup
+    if (fabs(ref - last_ref) > 0.5f) {
         last_ref = ref;
         motor->posPID.integral = 0;
     }
 
+    /* ---- 起步加速斜坡 ---- */
+    static float start_pos        = 0;
+    static float last_beam_ref    = 0;
+    if (fabs(ref - last_beam_ref) > 0.5f) {
+        last_beam_ref = ref;
+        start_pos = fused_pos;
+    }
+    float dist_start = fabs(fused_pos - start_pos);
+    float accel_limit = motor->posPID.outputMax;
+    // if (dist_start < 50.0f) {
+    //     accel_limit = motor->posPID.outputMax * (dist_start / 50.0f);
+    //     if (accel_limit < 1500.0f) accel_limit = 1500.0f;
+    // }
+    motor->posPID.outputMax = accel_limit;
+
+    /* ---- 位置式PID ---- */
     motor->posPID.ref = ref;
-    motor->posPID.fdb = motor->AxisData.AxisAngle_inDegree;
+    motor->posPID.fdb = fused_pos;
     PID_Calc_P(&motor->posPID);
 
     motor->speedPID.ref = motor->posPID.output;
     motor->speedPID.fdb = motor->FdbData.rpm;
     PID_Calc(&motor->speedPID);
-
-    // 单向速度限制：只限朝目标冲的方向，不限反向刹车
-    float s_error   = ref - motor->AxisData.AxisAngle_inDegree;
-    float s_abs_err = fabs(s_error);
-    if (s_abs_err < 300.0f) {
-        float limit = motor->speedPID.outputMax * (s_abs_err / 300.0f);
-        if (limit < 100.0f) limit = 100.0f;
-        if (s_error > 0 && motor->speedPID.output >  limit)      // 朝目标正向冲→限速
-            motor->speedPID.output =  limit;
-        else if (s_error < 0 && motor->speedPID.output < -limit)  // 朝目标反向冲→限速
-            motor->speedPID.output = -limit;
-        // output与error方向相反（刹车/回退）→ 不限速，自由制动
-    }
-
-  // if (s_abs_err < 3.0f) motor->speedPID.output = 0;
 }
 
 extern volatile uint32_t usart1_frame_cnt;

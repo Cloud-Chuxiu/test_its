@@ -40,7 +40,7 @@ typedef struct {
     float     beam_gap[SM_ROUNDS]; //避障横梁目的
     // 每轮相同的坐标
     float     up_lift;
-    int16_t   claw_grab;
+    int16_t   claw_grab[SM_ROUNDS];
     int16_t   claw_release;
     // 轮次
     uint8_t   round;

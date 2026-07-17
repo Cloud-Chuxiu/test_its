@@ -29,6 +29,7 @@ float weight_placement[5] = {0};
 
 volatile uint32_t usart1_rx_bytes = 0;
 volatile uint32_t usart1_frame_cnt = 0;
+volatile uint32_t usart3_frame_cnt = 0;
 /*********************Ras_pi************************/
 
 float weight_placement_tmp[5] = {0};
@@ -90,6 +91,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
             Rxbuffer_3[u3state] = tmp3;
             if (tmp3 == crc3 % 256) {
                 UartFlag[2] = 1;
+                usart3_frame_cnt++;
             }
             u3state = 0;
             crc3    = 0;

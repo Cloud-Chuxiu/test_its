@@ -18,8 +18,11 @@ void DJI_Function(void *argument)
     {
       positionServo_chassis(Chassis_distance, &hDJI[0]);
     }
-    //positionServo_Beam(Beam_distance, &hDJI[2]);
-    positionServo(Beam_distance, &hDJI[2]);
+    if(Beam_distance != 0)
+    {
+      positionServo_Beam(Beam_distance, &hDJI[2]);
+    }
+    //positionServo(Beam_distance, &hDJI[2]);
     positionServo(Updown_distance, &hDJI[5]);
 
     // ----- 统一CAN发送（避免竞态）-----

@@ -3,6 +3,7 @@
 
 #define CHASSIS_MAX         6000.0f
 #define CHASSIS_MM_PER_DEG  0.83f   // 底盘编码器→毫米系数 (ΔL/ΔE = 828/992)
+#define BEAM_MM_PER_DEG     0.52f   // 横梁编码器→毫米系数 (需实测)
 
 #include "can.h"
 #include <stdio.h>

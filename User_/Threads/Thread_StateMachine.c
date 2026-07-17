@@ -14,7 +14,7 @@ StateMachine_t sm = {
     .beam_start      = {0},
     .beam_gap        = {0},
     .up_lift         = 0,
-    .claw_grab       = 0,
+    .claw_grab       = {0},
     .claw_release    = 0,
     .round           = 0,
     .lift_stage      = 0,
@@ -34,7 +34,7 @@ static uint8_t Chassis_Done(void) {
 }
 static uint8_t Beam_Done(void) {
     return (hDJI[2].speedPID.output == 0)
-        && (fabs(hDJI[2].AxisData.AxisAngle_inDegree - sm.target_y) < 5.0f);
+        && (fabs(hDJI[2].AxisData.lidar_distance - sm.target_y) < 5.0f);
 }
 static uint8_t Updown_Done(void) {
     return (hDJI[5].speedPID.output == 0)
@@ -42,6 +42,10 @@ static uint8_t Updown_Done(void) {
 }
 static uint8_t Claw_Done(void) {
     return (HAL_GetTick() - sm.state_entry_tick) > 2000;
+}
+
+static uint8_t Claw_release_Done(void) {
+    return (HAL_GetTick() - sm.state_entry_tick) > 1000;
 }
 
 /* ---------- 状态跳转 ---------- */
@@ -73,45 +77,6 @@ void StateMachine_Function(void *argument)
         case SM_IDLE:
             break;
 
-        /* ===== 旧版调试 ===== */
-        // case SM_CHASSIS_X:
-        //     if (sm.state_entered) {
-        //        // printf("[SM] chassis -> %.1f mm\r\n", sm.target_x);
-        //         sm.state_entered = 0;
-        //     }
-        //     *pChassis_distance = sm.target_x;
-        //     if (Chassis_Done()) SM_EnterState(sm.next_state, 30000);
-        //     SM_CheckTimeout(); break;
-
-        // case SM_BEAM_Y:
-        //     if (sm.state_entered) {
-        //         //printf("[SM] beam -> %.1f\r\n", sm.target_y);
-        //         sm.state_entered = 0;
-        //     }
-        //     *pBeam_distance = sm.target_y;
-        //     if (Beam_Done()) SM_EnterState(sm.next_state, 20000);
-        //     SM_CheckTimeout(); break;
-
-        // case SM_UPDOWN_Z:
-        //     if (sm.state_entered) {
-        //         //printf("[SM] updown -> %.1f\r\n", sm.target_z);
-        //         sm.state_entered = 0;
-        //     }
-        //     *pUpdown_distance = sm.target_z;
-        //     if (Updown_Done()) SM_EnterState(sm.next_state, 20000);
-        //     SM_CheckTimeout(); break;
-
-        // case SM_CLAW:
-        //     if (sm.state_entered) {
-        //         //printf("[SM] claw -> %d\r\n", sm.target_claw);
-        //         sm.state_entered = 0;
-        //     }
-        //     WritePosEx(&h_FT_STS[0], sm.target_claw, 20, 50);
-        //     if (Claw_Done()) SM_EnterState(sm.next_state, 10000);
-        //     SM_CheckTimeout(); break;
-
-        /* ===== 完整赛程 ===== */
-
         /* 1. 升降升起 */
         case SM_UPDOWN_LIFT:
             if (sm.state_entered) {
@@ -120,7 +85,9 @@ void StateMachine_Function(void *argument)
             }
             sm.target_z = sm.up_lift;
             *pUpdown_distance = sm.up_lift;
-            *pBeam_distance = sm.beam_start[r];
+            // 升降先运行400ms，横梁再启动（避免碰撞）
+            if ((HAL_GetTick() - sm.state_entry_tick) > 300)
+                *pBeam_distance = sm.beam_start[r];
 
             if (Updown_Done()) {
                 if (sm.lift_stage)
@@ -173,7 +140,7 @@ void StateMachine_Function(void *argument)
               //  printf("[SM] R%d claw grab %d\r\n", r+1, sm.claw_grab);
                 sm.state_entered = 0;
             }
-            *pFT_phy = sm.claw_grab;
+            *pFT_phy = sm.claw_grab[r];
             if (Claw_Done()) {
                 sm.lift_stage = 1;
                 SM_EnterState(SM_UPDOWN_LIFT, 10000);
@@ -227,7 +194,7 @@ void StateMachine_Function(void *argument)
                 sm.state_entered = 0;
             }
             *pFT_phy = sm.claw_release;
-            if (Claw_Done()) SM_EnterState(SM_DONE, 10000);
+            if (Claw_release_Done()) SM_EnterState(SM_DONE, 10000);
             SM_CheckTimeout(); break;
 
         /* 任务完成 → 下一轮或结束 */
