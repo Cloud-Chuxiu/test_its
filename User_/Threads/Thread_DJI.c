@@ -1,11 +1,11 @@
 #include "Thread_DJI.h"
 
-float Chassis_distance = 0;
-float Beam_distance    = 0;
-float Updown_distance  = 0;
-float *pChassis_distance = &Chassis_distance;
-float *pBeam_distance    = &Beam_distance;
-float *pUpdown_distance  = &Updown_distance;
+volatile float Chassis_distance = 0;
+volatile float Beam_distance    = 0;
+volatile float Updown_distance  = 0;
+float *pChassis_distance = (float *)&Chassis_distance;
+float *pBeam_distance    = (float *)&Beam_distance;
+float *pUpdown_distance  = (float *)&Updown_distance;
 
 
 void DJI_Function(void *argument)

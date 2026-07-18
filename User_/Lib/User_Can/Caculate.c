@@ -84,25 +84,32 @@ void positionServo_Beam(float ref, DJI_t *motor)
 
     /* ---- 目标变化 → 积分清零 ---- */
     static float last_ref = 0;
+    static float start_enc_b = 0;
     if (fabs(ref - last_ref) > 0.5f) {
         last_ref = ref;
         motor->posPID.integral = 0;
+        start_enc_b = motor->AxisData.AxisAngle_inDegree;
     }
 
-    /* ---- 起步加速斜坡 ---- */
-    static float start_pos        = 0;
-    static float last_beam_ref    = 0;
-    if (fabs(ref - last_beam_ref) > 0.5f) {
-        last_beam_ref = ref;
-        start_pos = fused_pos;
+    float error = fabs(fused_pos - ref);
+
+    /* ---- 加速/减速斜坡（用常量基准，不用变量防锁死）---- */
+    float dist_start = fabs(motor->AxisData.AxisAngle_inDegree - start_enc_b) * BEAM_MM_PER_DEG;
+
+    float accel_limit = BEAM_MAX;
+    if (dist_start < 200.0f) {
+        float r = dist_start / 200.0f;
+        accel_limit = BEAM_MAX * r;
+        if (accel_limit < 2000.0f) accel_limit = 2000.0f;
     }
-    float dist_start = fabs(fused_pos - start_pos);
-    float accel_limit = motor->posPID.outputMax;
-    // if (dist_start < 50.0f) {
-    //     accel_limit = motor->posPID.outputMax * (dist_start / 50.0f);
-    //     if (accel_limit < 1500.0f) accel_limit = 1500.0f;
+
+    float decel_limit = BEAM_MAX;
+    // if (error < 500.0f) {
+    //     decel_limit = BEAM_MAX * (error / 500.0f);
+    //     if (decel_limit < 1000.0f) decel_limit = 1000.0f;
     // }
-    motor->posPID.outputMax = accel_limit;
+
+    motor->posPID.outputMax = (accel_limit < decel_limit) ? accel_limit : decel_limit;
 
     /* ---- 位置式PID ---- */
     motor->posPID.ref = ref;
@@ -112,6 +119,9 @@ void positionServo_Beam(float ref, DJI_t *motor)
     motor->speedPID.ref = motor->posPID.output;
     motor->speedPID.fdb = motor->FdbData.rpm;
     PID_Calc(&motor->speedPID);
+    if (error < 3.0f) {
+        motor->speedPID.output = 0;
+    }
 }
 
 extern volatile uint32_t usart1_frame_cnt;
@@ -136,28 +146,25 @@ void positionServo_chassis(float ref, DJI_t *motor)
         enc_latch  = motor->AxisData.AxisAngle_inDegree;
     }
 
-    /* ---- 起步加速斜坡：距起点越近，输出限制越低 ---- */
-    static float start_pos          = 0;
-    static float last_chassis_ref   = 0;
+    /* ---- 起步加速斜坡：用编码器增量，不受LIDAR跳变影响 ---- */
+    static float start_enc        = 0;
+    static float last_chassis_ref = 0;
     if (fabs(ref - last_chassis_ref) > 0.5f) {
         last_chassis_ref = ref;
-        start_pos = fused_pos;
+        start_enc = motor->AxisData.AxisAngle_inDegree;
         motor->posPID.integral = 0;  // 目标变化，积分清零
     }
-    float dist_start = fabs(fused_pos - start_pos);
+    float dist_start = fabs(motor->AxisData.AxisAngle_inDegree - start_enc) * CHASSIS_MM_PER_DEG;
 
     /* ---- 接近目标时线性减速 ---- */
     float error = fabs(fused_pos - ref);
     float decel_limit = CHASSIS_MAX;    // 减速上限（默认全输出）
-    // if (error < 600.0f) {
-    //     decel_limit = CHASSIS_MAX * (error / 600.0f);
-    //     if (decel_limit < 1500.0f) decel_limit = 1500.0f;
-    // }
 
     float accel_limit = CHASSIS_MAX;    // 加速上限（默认全输出）
-    if (dist_start < 200.0f) {
-        accel_limit = CHASSIS_MAX * (dist_start / 200.0f);
-        if (accel_limit < 800.0f) accel_limit = 1500.0f;
+    if (dist_start < 300.0f) {
+        float r = dist_start / 300.0f;
+        accel_limit = CHASSIS_MAX * r;
+        if (accel_limit < 1000.0f) accel_limit = 1000.0f;
     }
 
     // 取加速和减速率中更严格的那个

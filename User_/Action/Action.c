@@ -16,7 +16,7 @@ const DropPos_t drops[NUM_DROPS] = {
        {3755,      526,     302},   // B2
        {3755,      911,     302},   // B3
        {3755,      1331,    302},   // B4 
-       {3534,      1992,    302},   // B5 
+       {3534,      1790,    302},   // B5 
 };
 
 Mission_t mission;
@@ -54,9 +54,18 @@ void StateMachine_Init(int d1, int d2, int d3)
     mission.beam_start[2] = 507;
 
     // ===== 横梁避障目的 =====
-    mission.beam_gap[0] = 507;
-    mission.beam_gap[1] = 1422;
-    mission.beam_gap[2] = 1422;
+    mission.beam_gap[0] = 526;
+    mission.beam_gap[1] = 1331;
+    mission.beam_gap[2] = 1331;
+
+    // ===== 卸货在障碍区之外 → 避障目的地设为卸货目的地 =====
+    for (int i = 0; i < SM_ROUNDS; i++) {
+        if (mission.beam_drop[i] < 526.0f && mission.beam_gap[i] == 526)
+            mission.beam_gap[i] = mission.beam_drop[i];   // 左侧外: 直接到50
+        else if (mission.beam_drop[i] > 1331.0f && mission.beam_gap[i] == 1331)
+            mission.beam_gap[i] = mission.beam_drop[i];   // 右侧外: 直接到1790
+        // 526~1331 之间: 保持 mission.beam_gap 原值
+    }
 
     // ===== 通用参数 =====
     mission.up_lift      = 800;

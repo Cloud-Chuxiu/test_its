@@ -6,9 +6,9 @@
 #include "beam.h"
 #include "updown.h"
 
-extern float Chassis_distance;
-extern float Beam_distance;
-extern float Updown_distance;
+extern volatile float Chassis_distance;
+extern volatile float Beam_distance;
+extern volatile float Updown_distance;
 extern float *pChassis_distance;
 extern float *pBeam_distance;
 extern float *pUpdown_distance;

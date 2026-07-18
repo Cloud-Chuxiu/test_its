@@ -137,7 +137,7 @@ void StateMachine_Function(void *argument)
         /* 5. 夹爪夹取 */
         case SM_CLAW_GRAB:
             if (sm.state_entered) {
-              //  printf("[SM] R%d claw grab %d\r\n", r+1, sm.claw_grab);
+                printf("[SM] R%d claw grab %d\r\n", r+1, sm.claw_grab);
                 sm.state_entered = 0;
             }
             *pFT_phy = sm.claw_grab[r];
