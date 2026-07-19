@@ -22,6 +22,7 @@ StateMachine_t sm = {
     .target_y        = 0,
     .target_z        = 0,
     .target_claw     = 0,
+    .triggered       = 0,
     .state_entered   = 0,
     .timeout_ms      = 0,
 };
@@ -80,19 +81,16 @@ void StateMachine_Function(void *argument)
         /* 1. 升降升起 */
         case SM_UPDOWN_LIFT:
             if (sm.state_entered) {
-           //    printf("[SM] R%d updown lift %.1f\r\n", r+1, sm.up_lift);
                 sm.state_entered = 0;
+                sm.target_z = sm.up_lift;
+                *pUpdown_distance = sm.up_lift;
+                sm.triggered = 0;
             }
-            sm.target_z = sm.up_lift;
-            *pUpdown_distance = sm.up_lift;
-            // 升降先运行400ms，横梁再启动（避免碰撞）
-            if ((HAL_GetTick() - sm.state_entry_tick) > 300)
+            // 横梁延迟300ms，只触发一次
+            if (!sm.triggered && (HAL_GetTick() - sm.state_entry_tick) > 300) {
                 *pBeam_distance = sm.beam_start[r];
-
-
-
-
-
+                sm.triggered = 1;
+            }
             if (Updown_Done()) {
                 if (sm.lift_stage)
                     SM_EnterState(SM_CHASSIS_DROP, 20000);
@@ -104,53 +102,46 @@ void StateMachine_Function(void *argument)
         /* 2. 底盘→取货区 */
         case SM_CHASSIS_PICK:
             if (sm.state_entered) {
-          //    printf("[SM] R%d chassis pick %.1f mm\r\n", r+1, sm.pick_x[r]);
                 sm.state_entered = 0;
+                sm.target_x = sm.pick_x[r];
+                *pChassis_distance = sm.pick_x[r];
+                sm.triggered = 0;
             }
-            sm.target_x = sm.pick_x[r];
-            *pChassis_distance = sm.pick_x[r];
-             if (fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap1[r]) < 200) {
+            // via_gap 只触发一次
+            if (!sm.triggered && fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap1[r]) < 200) {
                 *pBeam_distance = sm.beam_pick[r];
+                sm.triggered = 1;
             }
-
-             if (fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap2[r]) < 200 && r == 2) {
-                *pBeam_distance = sm.beam_pick[r];
-            }
-
-            
             if (Chassis_Done()) SM_EnterState(SM_BEAM_PICK, 30000);
             SM_CheckTimeout(); break;
-        
-            /* 3. 横梁→取货侧 */
+
+        /* 3. 横梁→取货侧 */
         case SM_BEAM_PICK:
             if (sm.state_entered) {
-            //   printf("[SM] R%d beam pick %.1f\r\n", r+1, sm.beam_pick[r]);
                 sm.state_entered = 0;
+                sm.target_y = sm.beam_pick[r];
+                *pBeam_distance = sm.beam_pick[r];
             }
-            sm.target_y = sm.beam_pick[r];
-            *pBeam_distance = sm.beam_pick[r];
             if (Beam_Done()) SM_EnterState(SM_UPDOWN_PICK, 20000);
             SM_CheckTimeout(); break;
 
-       
+
         /* 4. 升降下降取货 */
         case SM_UPDOWN_PICK:
             if (sm.state_entered) {
-          //   printf("[SM] R%d updown pick %.1f\r\n", r+1, sm.up_pick[r]);
                 sm.state_entered = 0;
+                sm.target_z = sm.up_pick[r];
+                *pUpdown_distance = sm.up_pick[r];
             }
-            sm.target_z = sm.up_pick[r];
-            *pUpdown_distance = sm.up_pick[r];
             if (Updown_Done()) SM_EnterState(SM_CLAW_GRAB, 20000);
             SM_CheckTimeout(); break;
 
         /* 5. 夹爪夹取 */
         case SM_CLAW_GRAB:
             if (sm.state_entered) {
-            //    printf("[SM] R%d claw grab %d\r\n", r+1, sm.claw_grab);
                 sm.state_entered = 0;
+                *pFT_phy = sm.claw_grab[r];
             }
-            *pFT_phy = sm.claw_grab[r];
             if (Claw_Done()) {
                 sm.lift_stage = 1;
                 SM_EnterState(SM_UPDOWN_LIFT, 10000);
@@ -160,17 +151,15 @@ void StateMachine_Function(void *argument)
         /* 6. 底盘→卸货区（经过避障中继点自动触发横梁摆动） */
         case SM_CHASSIS_DROP:
             if (sm.state_entered) {
-           //     printf("[SM] R%d chassis drop %.1f, via %.1f\r\n", r+1, sm.drop_x[r], sm.via_gap1[r]);
                 sm.state_entered = 0;
+                sm.target_x = sm.drop_x[r];
+                *pChassis_distance = sm.drop_x[r];
+                sm.triggered = 0;
             }
-            sm.target_x = sm.drop_x[r];
-            *pChassis_distance = sm.drop_x[r];
-            // 底盘到达避障中继点 → 触发横梁摆动（底盘不停）
-            if (fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap1[r]) < 100) {
+            // via_gap1 只触发一次
+            if (!sm.triggered && fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap1[r]) < 100) {
                 *pBeam_distance = sm.beam_gap[r];
-            }
-            if(fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap2[r]) < 100){
-                *pBeam_distance = sm.beam_drop[r];
+                sm.triggered = 1;
             }
             if (Chassis_Done()) SM_EnterState(SM_BEAM_DROP, 30000);
             SM_CheckTimeout(); break;
@@ -178,42 +167,38 @@ void StateMachine_Function(void *argument)
         /* 7. 横梁→卸货侧 */
         case SM_BEAM_DROP:
             if (sm.state_entered) {
-              //  printf("[SM] R%d beam drop %.1f\r\n", r+1, sm.beam_drop[r]);
                 sm.state_entered = 0;
+                sm.target_y = sm.beam_drop[r];
+                *pBeam_distance = sm.beam_drop[r];
             }
-            sm.target_y = sm.beam_drop[r];
-            *pBeam_distance = sm.beam_drop[r];
             if (Beam_Done()) SM_EnterState(SM_UPDOWN_DROP, 20000);
             SM_CheckTimeout(); break;
 
         /* 8. 升降下降卸货 */
         case SM_UPDOWN_DROP:
             if (sm.state_entered) {
-             //  printf("[SM] R%d updown drop %.1f\r\n", r+1, sm.up_drop[r]);
                 sm.state_entered = 0;
+                sm.target_z = sm.up_drop[r];
+                *pUpdown_distance = sm.up_drop[r];
             }
-            sm.target_z = sm.up_drop[r];
-            *pUpdown_distance = sm.up_drop[r];
             if (Updown_Done()) SM_EnterState(SM_CLAW_RELEASE, 20000);
             SM_CheckTimeout(); break;
 
         /* 9. 夹爪张开 */
         case SM_CLAW_RELEASE:
             if (sm.state_entered) {
-              //  printf("[SM] R%d claw release %d\r\n", r+1, sm.claw_release);
                 sm.state_entered = 0;
+                *pFT_phy = sm.claw_release;
             }
-            *pFT_phy = sm.claw_release;
             if (Claw_release_Done()) SM_EnterState(SM_DONE, 10000);
             SM_CheckTimeout(); break;
 
         /* 任务完成 → 下一轮或结束 */
         case SM_DONE:
             if (sm.state_entered) {
-              //  printf("[SM] R%d done\r\n", r+1);
                 sm.state_entered = 0;
+                *pFT_phy = 2600;
             }
-            *pFT_phy = 2600; //夹爪初始化
             
 
             sm.round++;
