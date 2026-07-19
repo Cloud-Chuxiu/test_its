@@ -125,15 +125,15 @@ void StartDefaultTask(void *argument)
   Usart_Start();
   DJI_Start();
   FT_Start();
-  // SM_Start();
-  // osDelay(3000);
-  // SM_StartMission(&mission);
+  SM_Start();
+  osDelay(3000);
+  SM_StartMission(&mission);
   
 
 
-  osDelay(1000);
-  //*pBeam_distance = 1790;
-  *pChassis_distance = 48;
+  // osDelay(1000);
+  // *pBeam_distance = 1790;
+  // *pChassis_distance = 2000;
   for(;;)
   {    
     osDelay(100);

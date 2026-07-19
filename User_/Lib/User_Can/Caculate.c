@@ -146,43 +146,46 @@ void positionServo_chassis(float ref, DJI_t *motor)
         enc_latch  = motor->AxisData.AxisAngle_inDegree;
     }
 
-    /* ---- 起步加速斜坡：用编码器增量，不受LIDAR跳变影响 ---- */
-    static float start_enc        = 0;
-    static float last_chassis_ref = 0;
+    /* ---- 目标变化 → 积分清零 ---- */
+    static float start_enc          = 0;
+    static float last_chassis_ref   = 0;
     if (fabs(ref - last_chassis_ref) > 0.5f) {
         last_chassis_ref = ref;
         start_enc = motor->AxisData.AxisAngle_inDegree;
-        motor->posPID.integral = 0;  // 目标变化，积分清零
+        motor->posPID.integral = 0;
     }
     float dist_start = fabs(motor->AxisData.AxisAngle_inDegree - start_enc) * CHASSIS_MM_PER_DEG;
-
-    /* ---- 接近目标时线性减速 ---- */
     float error = fabs(fused_pos - ref);
-    float decel_limit = CHASSIS_MAX;    // 减速上限（默认全输出）
 
-    float accel_limit = CHASSIS_MAX;    // 加速上限（默认全输出）
+    /* ---- 加速斜坡 ---- */
+    float accel_limit = CHASSIS_MAX;
     if (dist_start < 300.0f) {
         float r = dist_start / 300.0f;
         accel_limit = CHASSIS_MAX * r;
-        if (accel_limit < 1000.0f) accel_limit = 1000.0f;
+        if (accel_limit < 2500.0f) accel_limit = 2500.0f;
     }
 
-    // 取加速和减速率中更严格的那个
+    /* ---- 减速斜坡 ---- */
+    float decel_limit = CHASSIS_MAX;
+    if (error < 500.0f) {
+        decel_limit = CHASSIS_MAX * (error / 500.0f);
+        if (decel_limit < 1500.0f) decel_limit = 1500.0f;
+    }
+
     motor->posPID.outputMax = (accel_limit < decel_limit) ? accel_limit : decel_limit;
 
     /* ---- 位置环=位置式PID, 速度环=增量式PID ---- */
     motor->posPID.ref = ref;
     motor->posPID.fdb = fused_pos;
     float saved_KI = motor->posPID.KI;
-    if (error > 100.0f) motor->posPID.KI = 0;   // 大误差时关KI，防积分饱和
+    if (error > 100.0f) motor->posPID.KI = 0;
     PID_Calc_P(&motor->posPID);
-    motor->posPID.KI = saved_KI;                 // 恢复KI
+    motor->posPID.KI = saved_KI;
 
     motor->speedPID.ref = motor->posPID.output;
     motor->speedPID.fdb = motor->FdbData.rpm;
     PID_Calc(&motor->speedPID);
-
-    if (error < 3.0f) {
+     if (error < 3.0f) {
         motor->speedPID.output = 0;
     }
 }
