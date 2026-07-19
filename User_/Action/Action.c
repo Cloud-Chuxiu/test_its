@@ -12,11 +12,11 @@ const BoxPos_t boxes[NUM_BOXES] = {
 /* ===== 5 个卸货区坐标 ===== */
 const DropPos_t drops[NUM_DROPS] = {
     // {chassis_x, beam_y, updown_z}
-       {3534,      50,      302},   // B1
-       {3755,      526,     302},   // B2
-       {3755,      911,     302},   // B3
-       {3755,      1331,    302},   // B4 
-       {3534,      1790,    302},   // B5 
+       {3534,      50,      400},   // B1
+       {3755,      526,     400},   // B2
+       {3755,      911,     400},   // B3
+       {3755,      1331,    400},   // B4 
+       {3534,      1790,    400},   // B5 
 };
 
 Mission_t mission;
@@ -48,11 +48,15 @@ void StateMachine_Init(int d1, int d2, int d3)
     mission.via_gap2[1] = 2700;
     mission.via_gap2[2] = 2700;
 
-    // ===== 横梁起步位 =====
+    // ===== 横梁起步位：R0固定，R1/R2根据上一轮卸货侧就近起步 =====
     mission.beam_start[0] = 1422;
-    mission.beam_start[1] = 507;
-    mission.beam_start[2] = 507;
-
+    for (int i = 1; i < SM_ROUNDS; i++) {
+        if (mission.beam_drop[i-1] < 900.0f)
+            mission.beam_start[i] = 507;   // 上次卸货左侧 → 就近从左侧起步
+        else
+            mission.beam_start[i] = 1422;  // 上次卸货右侧 → 就近从右侧起步
+    }
+    
     // ===== 横梁避障目的 =====
     mission.beam_gap[0] = 526;
     mission.beam_gap[1] = 1331;

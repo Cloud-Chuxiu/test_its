@@ -80,7 +80,7 @@ void StateMachine_Function(void *argument)
         /* 1. 升降升起 */
         case SM_UPDOWN_LIFT:
             if (sm.state_entered) {
-               printf("[SM] R%d updown lift %.1f\r\n", r+1, sm.up_lift);
+           //    printf("[SM] R%d updown lift %.1f\r\n", r+1, sm.up_lift);
                 sm.state_entered = 0;
             }
             sm.target_z = sm.up_lift;
@@ -88,6 +88,10 @@ void StateMachine_Function(void *argument)
             // 升降先运行400ms，横梁再启动（避免碰撞）
             if ((HAL_GetTick() - sm.state_entry_tick) > 300)
                 *pBeam_distance = sm.beam_start[r];
+
+
+
+
 
             if (Updown_Done()) {
                 if (sm.lift_stage)
@@ -100,7 +104,7 @@ void StateMachine_Function(void *argument)
         /* 2. 底盘→取货区 */
         case SM_CHASSIS_PICK:
             if (sm.state_entered) {
-              printf("[SM] R%d chassis pick %.1f mm\r\n", r+1, sm.pick_x[r]);
+          //    printf("[SM] R%d chassis pick %.1f mm\r\n", r+1, sm.pick_x[r]);
                 sm.state_entered = 0;
             }
             sm.target_x = sm.pick_x[r];
@@ -108,13 +112,19 @@ void StateMachine_Function(void *argument)
              if (fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap1[r]) < 200) {
                 *pBeam_distance = sm.beam_pick[r];
             }
+
+             if (fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap2[r]) < 200 && r == 2) {
+                *pBeam_distance = sm.beam_pick[r];
+            }
+
+            
             if (Chassis_Done()) SM_EnterState(SM_BEAM_PICK, 30000);
             SM_CheckTimeout(); break;
         
             /* 3. 横梁→取货侧 */
         case SM_BEAM_PICK:
             if (sm.state_entered) {
-               printf("[SM] R%d beam pick %.1f\r\n", r+1, sm.beam_pick[r]);
+            //   printf("[SM] R%d beam pick %.1f\r\n", r+1, sm.beam_pick[r]);
                 sm.state_entered = 0;
             }
             sm.target_y = sm.beam_pick[r];
@@ -126,7 +136,7 @@ void StateMachine_Function(void *argument)
         /* 4. 升降下降取货 */
         case SM_UPDOWN_PICK:
             if (sm.state_entered) {
-             printf("[SM] R%d updown pick %.1f\r\n", r+1, sm.up_pick[r]);
+          //   printf("[SM] R%d updown pick %.1f\r\n", r+1, sm.up_pick[r]);
                 sm.state_entered = 0;
             }
             sm.target_z = sm.up_pick[r];
@@ -137,7 +147,7 @@ void StateMachine_Function(void *argument)
         /* 5. 夹爪夹取 */
         case SM_CLAW_GRAB:
             if (sm.state_entered) {
-                printf("[SM] R%d claw grab %d\r\n", r+1, sm.claw_grab);
+            //    printf("[SM] R%d claw grab %d\r\n", r+1, sm.claw_grab);
                 sm.state_entered = 0;
             }
             *pFT_phy = sm.claw_grab[r];
@@ -150,7 +160,7 @@ void StateMachine_Function(void *argument)
         /* 6. 底盘→卸货区（经过避障中继点自动触发横梁摆动） */
         case SM_CHASSIS_DROP:
             if (sm.state_entered) {
-                printf("[SM] R%d chassis drop %.1f, via %.1f\r\n", r+1, sm.drop_x[r], sm.via_gap1[r]);
+           //     printf("[SM] R%d chassis drop %.1f, via %.1f\r\n", r+1, sm.drop_x[r], sm.via_gap1[r]);
                 sm.state_entered = 0;
             }
             sm.target_x = sm.drop_x[r];
@@ -179,7 +189,7 @@ void StateMachine_Function(void *argument)
         /* 8. 升降下降卸货 */
         case SM_UPDOWN_DROP:
             if (sm.state_entered) {
-                printf("[SM] R%d updown drop %.1f\r\n", r+1, sm.up_drop[r]);
+             //  printf("[SM] R%d updown drop %.1f\r\n", r+1, sm.up_drop[r]);
                 sm.state_entered = 0;
             }
             sm.target_z = sm.up_drop[r];

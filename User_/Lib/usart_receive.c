@@ -99,6 +99,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         HAL_UART_Receive_IT(&huart3, usart3_rx, 1);
     }
 
+    if (huart->Instance == USART6) {
+       // HAL_UART_Transmit(&huart6, (uint8_t*)"received\r\n", 10, 50);
+        HAL_UART_Receive_IT(&huart6, usart6_rx, 1);
+    }
+
 }
 // void HAL_UART_ErrorCallback(UART_HandleTypeDef *uartHandle)
 // {
