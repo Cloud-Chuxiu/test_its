@@ -98,16 +98,17 @@ void positionServo_Beam(float ref, DJI_t *motor)
 
     float accel_limit = BEAM_MAX;
     if (dist_start < 200.0f) {
-        float r = dist_start / 200.0f;
-        accel_limit = BEAM_MAX * r;
-        if (accel_limit < 2000.0f) accel_limit = 2000.0f;
+        float t = dist_start / 200.0f;
+        float s = t * t * (3.0f - 2.0f * t);
+        accel_limit = 2000.0f + (BEAM_MAX - 2000.0f) * s;
     }
 
     float decel_limit = BEAM_MAX;
-    // if (error < 500.0f) {
-    //     decel_limit = BEAM_MAX * (error / 500.0f);
-    //     if (decel_limit < 1000.0f) decel_limit = 1000.0f;
-    // }
+    if (error < 500.0f) {
+        float t = error / 500.0f;
+        float s = t * t * (3.0f - 2.0f * t);   // smoothstep 减速
+        decel_limit = 1000.0f + (BEAM_MAX - 1000.0f) * s;
+    }
 
     motor->posPID.outputMax = (accel_limit < decel_limit) ? accel_limit : decel_limit;
 
@@ -119,8 +120,8 @@ void positionServo_Beam(float ref, DJI_t *motor)
     motor->speedPID.ref = motor->posPID.output;
     motor->speedPID.fdb = motor->FdbData.rpm;
     PID_Calc(&motor->speedPID);
-    if (error < 3.0f) {
-        motor->speedPID.output = 0;
+     if (error < 3.0f) {
+        motor->posPID.output = 0;
     }
 }
 
@@ -160,16 +161,16 @@ void positionServo_chassis(float ref, DJI_t *motor)
     /* ---- 加速斜坡 ---- */
     float accel_limit = CHASSIS_MAX;
     if (dist_start < 300.0f) {
-        float r = dist_start / 300.0f;
-        accel_limit = CHASSIS_MAX * r;
-        if (accel_limit < 2500.0f) accel_limit = 2500.0f;
+        float t = dist_start / 300.0f;
+        float s = t * t * (3.0f - 2.0f * t);  // smoothstep S曲线
+        accel_limit = 2500.0f + (CHASSIS_MAX - 2500.0f) * s;
     }
 
     /* ---- 减速斜坡 ---- */
     float decel_limit = CHASSIS_MAX;
-    if (error < 500.0f) {
-        decel_limit = CHASSIS_MAX * (error / 500.0f);
-        if (decel_limit < 1500.0f) decel_limit = 1500.0f;
+    if (error < 750.0f) {
+        decel_limit = CHASSIS_MAX * (error / 750.0f);
+        if (decel_limit < 500.0f) decel_limit = 500.0f;
     }
 
     motor->posPID.outputMax = (accel_limit < decel_limit) ? accel_limit : decel_limit;
@@ -186,7 +187,7 @@ void positionServo_chassis(float ref, DJI_t *motor)
     motor->speedPID.fdb = motor->FdbData.rpm;
     PID_Calc(&motor->speedPID);
      if (error < 3.0f) {
-        motor->speedPID.output = 0;
+        motor->posPID.output = 0;
     }
 }
 

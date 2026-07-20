@@ -25,7 +25,7 @@ void DJI_Init()
 		//posPID
 		hDJI[i].posPID.KP = 11.0f;
         hDJI[i].posPID.KI = 0.0f;
-        hDJI[i].posPID.KD = 9.5f;
+        hDJI[i].posPID.KD = 8.5f;
         hDJI[i].posPID.outputMax = 5000;
 	 }
 	 //升降结构的pid参数

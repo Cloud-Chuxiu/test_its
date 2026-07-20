@@ -22,7 +22,7 @@ void Usart_Function(void *argument)
       STP_23L_Decode(Rxbuffer_3, &Lidar2);
       UartFlag[2] = 0;
       hDJI[2].AxisData.lidar_distance = Lidar2.distance_aver;
-      //printf("%.2f\n",hDJI[2].AxisData.lidar_distance);
+     // printf("%.2f\n",hDJI[2].AxisData.lidar_distance);
     }
       osDelay(1);
   }
@@ -35,7 +35,7 @@ void Usart_Start()
   const osThreadAttr_t Usart_attributes = {
     .name       = "Usart",
     .stack_size = 128 * 10,
-    .priority   = (osPriority_t)osPriorityAboveNormal,
+    .priority   = (osPriority_t)osPriorityNormal,
   };
   osThreadNew(Usart_Function, NULL, &Usart_attributes);
 }

@@ -50,7 +50,7 @@ typedef struct {
     int16_t   target_claw;
     // 状态管理
     uint8_t   state_entered;
-    uint8_t   triggered;       // 单次触发锁
+    uint8_t   trig1, trig2;    // 单次触发锁
     uint32_t  state_entry_tick;
     uint32_t  timeout_ms;
 } StateMachine_t;

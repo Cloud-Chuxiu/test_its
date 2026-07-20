@@ -22,7 +22,7 @@ StateMachine_t sm = {
     .target_y        = 0,
     .target_z        = 0,
     .target_claw     = 0,
-    .triggered       = 0,
+    .trig1 = 0, .trig2 = 0,
     .state_entered   = 0,
     .timeout_ms      = 0,
 };
@@ -30,11 +30,11 @@ StateMachine_t sm = {
 /* ---------- 完成检测 ---------- */
 
 static uint8_t Chassis_Done(void) {
-    return (hDJI[0].speedPID.output == 0)
-        && (fabs(hDJI[0].AxisData.lidar_distance - sm.target_x) < 5.0f);
+    return (hDJI[0].posPID.output == 0)
+        && (fabs(hDJI[0].AxisData.lidar_distance - sm.target_x) < 10.0f);
 }
 static uint8_t Beam_Done(void) {
-    return (hDJI[2].speedPID.output == 0)
+    return (hDJI[2].posPID.output == 0)
         && (fabs(hDJI[2].AxisData.lidar_distance - sm.target_y) < 5.0f);
 }
 static uint8_t Updown_Done(void) {
@@ -82,15 +82,12 @@ void StateMachine_Function(void *argument)
         case SM_UPDOWN_LIFT:
             if (sm.state_entered) {
                 sm.state_entered = 0;
-                sm.target_z = sm.up_lift;
-                *pUpdown_distance = sm.up_lift;
-                sm.triggered = 0;
+                sm.trig1 = sm.trig2 = 0;
             }
-            // 横梁延迟300ms，只触发一次
-            if (!sm.triggered && (HAL_GetTick() - sm.state_entry_tick) > 300) {
-                *pBeam_distance = sm.beam_start[r];
-                sm.triggered = 1;
-            }
+            sm.target_z = sm.up_lift;
+            if (!sm.trig1) { *pUpdown_distance = sm.up_lift; sm.trig1 = 1; }
+            if (!sm.trig2 && (HAL_GetTick() - sm.state_entry_tick) > 300)
+                { *pBeam_distance = sm.beam_start[r]; sm.trig2 = 1; }
             if (Updown_Done()) {
                 if (sm.lift_stage)
                     SM_EnterState(SM_CHASSIS_DROP, 20000);
@@ -103,15 +100,12 @@ void StateMachine_Function(void *argument)
         case SM_CHASSIS_PICK:
             if (sm.state_entered) {
                 sm.state_entered = 0;
-                sm.target_x = sm.pick_x[r];
-                *pChassis_distance = sm.pick_x[r];
-                sm.triggered = 0;
+                sm.trig1 = sm.trig2 = 0;
             }
-            // via_gap 只触发一次
-            if (!sm.triggered && fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap1[r]) < 200) {
-                *pBeam_distance = sm.beam_pick[r];
-                sm.triggered = 1;
-            }
+            sm.target_x = sm.pick_x[r];
+            if (!sm.trig1) { *pChassis_distance = sm.pick_x[r]; sm.trig1 = 1; }
+            if (!sm.trig2 && fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap1[r]) < 200)
+                { *pBeam_distance = sm.beam_pick[r]; sm.trig2 = 1; }
             if (Chassis_Done()) SM_EnterState(SM_BEAM_PICK, 30000);
             SM_CheckTimeout(); break;
 
@@ -124,7 +118,6 @@ void StateMachine_Function(void *argument)
             }
             if (Beam_Done()) SM_EnterState(SM_UPDOWN_PICK, 20000);
             SM_CheckTimeout(); break;
-
 
         /* 4. 升降下降取货 */
         case SM_UPDOWN_PICK:
@@ -152,15 +145,18 @@ void StateMachine_Function(void *argument)
         case SM_CHASSIS_DROP:
             if (sm.state_entered) {
                 sm.state_entered = 0;
-                sm.target_x = sm.drop_x[r];
-                *pChassis_distance = sm.drop_x[r];
-                sm.triggered = 0;
+                sm.trig1 = sm.trig2 = 0;
             }
-            // via_gap1 只触发一次
-            if (!sm.triggered && fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap1[r]) < 100) {
-                *pBeam_distance = sm.beam_gap[r];
-                sm.triggered = 1;
+            sm.target_x = sm.drop_x[r];
+            if (!sm.trig1) { *pChassis_distance = sm.drop_x[r]; sm.trig1 = 1; }
+            if (!sm.trig2 && fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap1[r]) < 100)
+                { *pBeam_distance = sm.beam_gap[r]; }
+            if (fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap2[r]) < 100)
+            {
+                *pUpdown_distance = sm.up_drop[r];
+                *pBeam_distance = sm.beam_drop[r];
             }
+                
             if (Chassis_Done()) SM_EnterState(SM_BEAM_DROP, 30000);
             SM_CheckTimeout(); break;
 
@@ -170,6 +166,7 @@ void StateMachine_Function(void *argument)
                 sm.state_entered = 0;
                 sm.target_y = sm.beam_drop[r];
                 *pBeam_distance = sm.beam_drop[r];
+
             }
             if (Beam_Done()) SM_EnterState(SM_UPDOWN_DROP, 20000);
             SM_CheckTimeout(); break;
@@ -232,7 +229,7 @@ void SM_Start() {
     osThreadId_t h;
     const osThreadAttr_t a = {
         .name = "StateMachine", .stack_size = 128 * 10,
-        .priority = (osPriority_t)osPriorityAboveNormal,
+        .priority = (osPriority_t)osPriorityNormal,
     };
     osThreadNew(StateMachine_Function, NULL, &a);
 }
