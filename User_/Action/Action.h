@@ -39,7 +39,8 @@ typedef struct {
     float   up_drop[SM_ROUNDS];
     float   via_gap1[SM_ROUNDS];
     float   via_gap2[SM_ROUNDS];
-    float   beam_start[SM_ROUNDS];
+    float   beam_start_pick[SM_ROUNDS];
+    float   beam_start_drop[SM_ROUNDS];
     float   beam_gap[SM_ROUNDS];
     float   up_lift;
     int16_t claw_release;

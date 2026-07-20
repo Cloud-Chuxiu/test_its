@@ -48,18 +48,37 @@ void StateMachine_Init(int d1, int d2, int d3)
     mission.via_gap2[1] = 2700;
     mission.via_gap2[2] = 2700;
 
-    // ===== 横梁起步位：R0固定，R1/R2根据上一轮卸货侧就近起步 =====
-    mission.beam_start[0] = 1422;
+    // ===== 横梁起步位（区分去取货/去卸货）=====
+    mission.beam_start_pick[0] = 1422;
+    mission.beam_start_drop[0] = 1422;
     for (int i = 1; i < SM_ROUNDS; i++) {
         if (mission.beam_drop[i-1] < 900.0f)
-            mission.beam_start[i] = 430;   // 上次卸货左侧 → 就近从左侧起步
+            mission.beam_start_pick[i] = 430;
         else
-            mission.beam_start[i] = 1422;  // 上次卸货右侧 → 就近从右侧起步
+            mission.beam_start_pick[i] = 1422;
     }
-
+    
+    mission.beam_start_drop[0] = 1422;
+    if(mission.beam_drop[1] < 900)
+    {
+        mission.beam_start_drop[1] = 1422;
+    } 
+    else
+    {
+        mission.beam_start_drop[1] = 430;
+    }
+    mission.beam_start_drop[2] = 430;
+    
     // ===== 横梁避障目的 =====
     mission.beam_gap[0] = 526;
-    mission.beam_gap[1] = 1331;
+    if(mission.beam_start_drop[1] == 430)
+    {
+        mission.beam_gap[1] = 1331;
+    } 
+    else
+    {
+        mission.beam_gap[1] = 526;
+    }
     mission.beam_gap[2] = 1331;
 
     // ===== 卸货在障碍区之外 → 避障目的地设为卸货目的地 =====
@@ -89,8 +108,9 @@ void SM_StartMission(const Mission_t *m)
         sm.up_drop[i]   = m->up_drop[i];
         sm.via_gap1[i]  = m->via_gap1[i];
         sm.via_gap2[i]  = m->via_gap2[i];
-        sm.beam_start[i]= m->beam_start[i];
-        sm.beam_gap[i]  = m->beam_gap[i];
+        sm.beam_start_pick[i] = m->beam_start_pick[i];
+        sm.beam_start_drop[i] = m->beam_start_drop[i];
+        sm.beam_gap[i]        = m->beam_gap[i];
         sm.claw_grab[i] = boxes[i].claw_grab;
     }
     sm.up_lift      = m->up_lift;
