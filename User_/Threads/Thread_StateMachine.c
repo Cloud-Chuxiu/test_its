@@ -132,23 +132,6 @@ void StateMachine_Function(void *argument)
             if (Beam_Done()) SM_EnterState(SM_CAMERA_BEAN, 20000);
             SM_CheckTimeout(); break;
         
-        /*3.5. 豆子识别*/    
-
-        // case SM_CAMERA_GOODS:
-        //     if(sm.state_entered){
-        //         sm.state_entered = 0;
-
-        //     }
-
-        
-
-
-
-
-
-
-
-
         /* 4. 升降下降取货 */
         case SM_UPDOWN_PICK:
             if (sm.state_entered) {
@@ -256,9 +239,9 @@ void StateMachine_Function(void *argument)
                 pi_digit_ready = 0;
                // printf("[SM] BOX_ORDER: waiting for box order...\r\n");
             }
-            if (pi_digit_ready && strlen(pi_digit_str) >= 5) {
-                // 存储箱子顺序 如 "23451"
-                strncpy(sm.box_order, pi_digit_str, 5);
+            if (pi_digit_ready && pi_digit_str[0] == 'D' && strlen(pi_digit_str) >= 6) {
+                // 存储箱子顺序 如 "D23451" → "23451"
+                strncpy(sm.box_order, pi_digit_str + 1, 5);
                 sm.box_order[5] = '\0';
                 HAL_UART_Transmit(&huart6, (uint8_t*)"OK\n", 3, 100);
              //   printf("[SM] BOX_ORDER: got [%s] -> sent OK\r\n", sm.box_order);

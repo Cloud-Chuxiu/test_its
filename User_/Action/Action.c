@@ -69,13 +69,15 @@ void Action_SetDropDest(int round, char bean_code)
 {
     if (round >= SM_ROUNDS) return;
 
-    int drop_idx;
-    if      (bean_code == '1') drop_idx = B1;
-    else if (bean_code == '2') drop_idx = B2;
-    else if (bean_code == '3') drop_idx = B3;
-    else if (bean_code == '4') drop_idx = B4;
-    else if (bean_code == '5') drop_idx = B5;
-    else return;  // 无效豆子码
+    // 在 box_order 中查找 bean_code（箱子编号）的位置 → B区索引
+    int drop_idx = -1;
+    for (int i = 0; i < 5; i++) {
+        if (sm.box_order[i] == bean_code) {
+            drop_idx = i;
+            break;
+        }
+    }
+    if (drop_idx < 0 || drop_idx >= NUM_DROPS) return;  // 未找到或无效
 
     // 写入 sm 的卸货目的地
     sm.drop_x[round]    = drops[drop_idx].chassis_x;
