@@ -106,9 +106,9 @@ int main(void)
   MX_CAN2_Init();
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
-  HAL_TIM_Base_Start_IT(&htim8);  // Æô¶¯Ê±»ù
-  HAL_TIM_Base_Start_IT(&htim12); // Æô¶¯Ê±»ù
-  //ÅäÖÃcan¹ýÂËÆ÷
+  HAL_TIM_Base_Start_IT(&htim8);  // ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+  HAL_TIM_Base_Start_IT(&htim12); // ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+  //ï¿½ï¿½ï¿½ï¿½canï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
   CANFilterInit(&hcan1);
   CANFilterInit(&hcan2);
   for(int i = 0; i < 8;i++)
@@ -117,9 +117,9 @@ int main(void)
   }
   DJI_Init();
 
-  StateMachine_Init(B5,B3,B1);
+  StateMachine_Init();
   
-  HAL_Delay(3000); //µÈ´ý¸÷Ä£¿é³õÊ¼»¯
+  HAL_Delay(3000); //ï¿½È´ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½
   /* USER CODE END 2 */
 
   /* Init scheduler */

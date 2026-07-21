@@ -23,10 +23,9 @@ typedef enum {
     SM_CLAW_GRAB,SM_CAMERA_GOODS,
     SM_CHASSIS_DROP, SM_BEAM_DROP, SM_UPDOWN_DROP, SM_CLAW_RELEASE,
     SM_DONE, SM_ERROR,
-    // 视觉联调测试
-    SM_CAMERA_BOX,     // 箱子识别
-    SM_CHASSIS_SIM,    // 底盘模拟运行
-    SM_CAMERA_BEAN     // 豆子识别
+    // 视觉融合
+    SM_CAMERA_BOX_ORDER,  // 箱子顺序识别（赛程最开头）
+    SM_CAMERA_BEAN        // 豆子识别（抓取前）
 } SM_State;
 
 typedef struct {
@@ -51,7 +50,7 @@ typedef struct {
     // 轮次
     uint8_t   round;
     uint8_t   lift_stage;
-    uint8_t   bean_count;   // 豆子识别计数(0~2)
+    char      box_order[6];    // 箱子顺序(如"23451")，来自树莓派
     // 旧版目标
     float     target_x, target_y, target_z;
     int16_t   target_claw;

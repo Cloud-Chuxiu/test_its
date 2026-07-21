@@ -21,22 +21,18 @@ const DropPos_t drops[NUM_DROPS] = {
 
 Mission_t mission;
 
-void StateMachine_Init(int d1, int d2, int d3)
+void StateMachine_Init(void)
 {
-    int drop_idx[3] = {d1, d2, d3};
-
     for (int i = 0; i < SM_ROUNDS; i++) {
-        int d = drop_idx[i];
-
-        // 取货参数来自货箱
+        // 取货参数来自货箱（固定）
         mission.pick_x[i]    = boxes[i].chassis_x;
         mission.beam_pick[i] = boxes[i].beam_y;
         mission.up_pick[i]   = boxes[i].updown_z;
 
-        // 卸货参数来自卸货区
-        mission.drop_x[i]    = drops[d].chassis_x;
-        mission.beam_drop[i] = drops[d].beam_y;
-        mission.up_drop[i]   = drops[d].updown_z;
+        // 卸货目的地由视觉动态填入，初始置0
+        mission.drop_x[i]    = 0;
+        mission.beam_drop[i] = 0;
+        mission.up_drop[i]   = 0;
     }
 
     // ===== 避障中继点 =====
@@ -48,51 +44,78 @@ void StateMachine_Init(int d1, int d2, int d3)
     mission.via_gap2[1] = 2700;
     mission.via_gap2[2] = 2700;
 
-    // ===== 横梁起步位（区分去取货/去卸货）=====
+    // ===== 横梁起步位（先用默认值，Action_SetDropDest 会修正）=====
     mission.beam_start_pick[0] = 1422;
+    mission.beam_start_pick[1] = 1422;
+    mission.beam_start_pick[2] = 1422;
+
+
     mission.beam_start_drop[0] = 1422;
-    for (int i = 1; i < SM_ROUNDS; i++) {
-        if (mission.beam_drop[i-1] < 900.0f)
-            mission.beam_start_pick[i] = 430;
-        else
-            mission.beam_start_pick[i] = 1422;
-    }
-    
-    mission.beam_start_drop[0] = 1422;
-    if(mission.beam_drop[1] < 900)
-    {
-        mission.beam_start_drop[1] = 1422;
-    } 
-    else
-    {
-        mission.beam_start_drop[1] = 430;
-    }
+    mission.beam_start_drop[1] = 1422;
     mission.beam_start_drop[2] = 430;
-    
+
     // ===== 横梁避障目的 =====
     mission.beam_gap[0] = 526;
-    if(mission.beam_start_drop[1] == 430)
-    {
-        mission.beam_gap[1] = 1331;
-    } 
-    else
-    {
-        mission.beam_gap[1] = 526;
-    }
+    mission.beam_gap[1] = 526;
     mission.beam_gap[2] = 1331;
-
-    // ===== 卸货在障碍区之外 → 避障目的地设为卸货目的地 =====
-    for (int i = 0; i < SM_ROUNDS; i++) {
-        if (mission.beam_drop[i] < 526.0f && mission.beam_gap[i] == 526)
-            mission.beam_gap[i] = mission.beam_drop[i];   // 左侧外: 直接到50
-        else if (mission.beam_drop[i] > 1331.0f && mission.beam_gap[i] == 1331)
-            mission.beam_gap[i] = mission.beam_drop[i];   // 右侧外: 直接到1790
-        // 526~1331 之间: 保持 mission.beam_gap 原值
-    }
 
     // ===== 通用参数 =====
     mission.up_lift      = 800;
     mission.claw_release = 2000;
+}
+
+/* 根据豆子码动态设置本轮卸货目的地，并重算关联的避障参数 */
+void Action_SetDropDest(int round, char bean_code)
+{
+    if (round >= SM_ROUNDS) return;
+
+    int drop_idx;
+    if      (bean_code == '1') drop_idx = B1;
+    else if (bean_code == '2') drop_idx = B2;
+    else if (bean_code == '3') drop_idx = B3;
+    else if (bean_code == '4') drop_idx = B4;
+    else if (bean_code == '5') drop_idx = B5;
+    else return;  // 无效豆子码
+
+    // 写入 sm 的卸货目的地
+    sm.drop_x[round]    = drops[drop_idx].chassis_x;
+    sm.beam_drop[round] = drops[drop_idx].beam_y;
+    sm.up_drop[round]   = drops[drop_idx].updown_z;
+
+    // ---- 重算受影响的 beam_start_pick（下一轮取货起步位依赖本轮 beam_drop）----
+    if (round + 1 < SM_ROUNDS) {
+        if (sm.beam_drop[round] < 900.0f)
+            sm.beam_start_pick[round + 1] = 430;
+        else
+            sm.beam_start_pick[round + 1] = 1422;
+    }
+
+    // ---- 重算受影响的 beam_start_drop ----
+    if (round == 0) {
+        sm.beam_start_drop[0] = 1422;
+    }
+    if (round == 1) {
+        if (sm.beam_drop[1] < 900.0f)
+            sm.beam_start_drop[1] = 1422;
+        else
+            sm.beam_start_drop[1] = 430;
+    }
+    // round==2: beam_start_drop[2] 恒为 430，不需重算
+
+    // ---- 重算受影响的 beam_gap ----
+    if (round == 1) {
+        // beam_gap[1] 依赖 beam_start_drop[1]
+        if (sm.beam_start_drop[1] == 430)
+            sm.beam_gap[1] = 1331;
+        else
+            sm.beam_gap[1] = 526;
+    }
+
+    // ---- 卸货在障碍区之外 → 避障目的地设为卸货目的地 ----
+    if (sm.beam_drop[round] < 526.0f && sm.beam_gap[round] == 526)
+        sm.beam_gap[round] = sm.beam_drop[round];
+    else if (sm.beam_drop[round] > 1331.0f && sm.beam_gap[round] == 1331)
+        sm.beam_gap[round] = sm.beam_drop[round];
 }
 
 void SM_StartMission(const Mission_t *m)
@@ -118,5 +141,5 @@ void SM_StartMission(const Mission_t *m)
     sm.round        = 0;
     sm.lift_stage   = 0;
 
-    SM_EnterState(SM_UPDOWN_LIFT, 20000);
+    SM_EnterState(SM_CAMERA_BOX_ORDER, 50000);
 }

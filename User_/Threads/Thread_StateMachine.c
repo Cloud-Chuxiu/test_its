@@ -1,4 +1,5 @@
 #include "Thread_StateMachine.h"
+#include <string.h>
 
 StateMachine_t sm = {
     .current_state   = SM_IDLE,
@@ -19,7 +20,7 @@ StateMachine_t sm = {
     .claw_release    = 0,
     .round           = 0,
     .lift_stage      = 0,
-    .bean_count      = 0,
+    .box_order       = {0},
     .target_x        = 0,
     .target_y        = 0,
     .target_z        = 0,
@@ -66,7 +67,7 @@ void SM_EnterState(SM_State s, uint32_t timeout) {
 }
 static void SM_CheckTimeout(void) {
     if ((HAL_GetTick() - sm.state_entry_tick) > sm.timeout_ms) {
-        printf("[SM] timeout %s\r\n", SM_StateName(sm.current_state));
+        //printf("[SM] timeout %s\r\n", SM_StateName(sm.current_state));
         sm.current_state = SM_ERROR;
     }
 }
@@ -85,36 +86,6 @@ void StateMachine_Function(void *argument)
         case SM_IDLE:
             break;
 
-        /*视觉测试状态*/
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         /* 1. 升降升起 */
         case SM_UPDOWN_LIFT:
             if (sm.state_entered) {
@@ -128,10 +99,7 @@ void StateMachine_Function(void *argument)
                     ? sm.beam_start_drop[r] : sm.beam_start_pick[r];
                 sm.trig2 = 1;
                 *pChassis_distance = sm.pick_x[r];
-                
             }
-
-
             if (Updown_Done()) {
                 if (sm.lift_stage)
                     SM_EnterState(SM_CHASSIS_DROP, 20000);
@@ -161,7 +129,7 @@ void StateMachine_Function(void *argument)
                 sm.target_y = sm.beam_pick[r];
                 *pBeam_distance = sm.beam_pick[r];
             }
-            if (Beam_Done()) SM_EnterState(SM_UPDOWN_PICK, 20000);
+            if (Beam_Done()) SM_EnterState(SM_CAMERA_BEAN, 20000);
             SM_CheckTimeout(); break;
         
         /*3.5. 豆子识别*/    
@@ -279,53 +247,38 @@ void StateMachine_Function(void *argument)
             }
             break;
 
-        /* ========== 视觉联调测试 ========== */
+        /* ========== 视觉融合 ========== */
 
-        /* 状态1: 数字识别 —— 等待树莓派发送 D12345 */
-        case SM_CAMERA_BOX:
+        /* 箱子顺序识别（赛程最开头，只执行一次） */
+        case SM_CAMERA_BOX_ORDER:
             if (sm.state_entered) {
                 sm.state_entered = 0;
                 pi_digit_ready = 0;
-                //printf("[SM] CAMERA_BOX: waiting for digits...\r\n");
+               // printf("[SM] BOX_ORDER: waiting for box order...\r\n");
             }
-            if (pi_digit_ready) {
+            if (pi_digit_ready && strlen(pi_digit_str) >= 5) {
+                // 存储箱子顺序 如 "23451"
+                strncpy(sm.box_order, pi_digit_str, 5);
+                sm.box_order[5] = '\0';
                 HAL_UART_Transmit(&huart6, (uint8_t*)"OK\n", 3, 100);
-               // printf("[SM] CAMERA_BOX: got [%s] -> sent OK\r\n", pi_digit_str);
-                SM_EnterState(SM_CHASSIS_SIM, 10000);
+             //   printf("[SM] BOX_ORDER: got [%s] -> sent OK\r\n", sm.box_order);
+                SM_EnterState(SM_UPDOWN_LIFT, 20000);
             }
             SM_CheckTimeout(); break;
 
-        /* 状态2: 底盘模拟运行 */
-        case SM_CHASSIS_SIM:
-            if (sm.state_entered) {
-                sm.state_entered = 0;
-                sm.bean_count = 0;
-                //printf("[SM] CHASSIS_SIM: chassis moving (1000ms)...\r\n");
-            }
-            if ((HAL_GetTick() - sm.state_entry_tick) > 1000) {
-              //  printf("[SM] CHASSIS_SIM: done\r\n");
-                SM_EnterState(SM_CAMERA_BEAN, 10000);
-            }
-            break;
-
-        /* 状态3: 豆子识别 —— 发 GO\n，等待豆子码，重复3次 */
+        /* 豆子识别（抓取前，每轮执行） */
         case SM_CAMERA_BEAN:
             if (sm.state_entered) {
                 sm.state_entered = 0;
                 pi_bean_ready = 0;
                 HAL_UART_Transmit(&huart6, (uint8_t*)"GO\n", 3, 100);
-                //printf("[SM] CAMERA_BEAN: sent GO (%d/3)\r\n", sm.bean_count + 1);
+             //   printf("[SM] CAMERA_BEAN: sent GO (round %d)\r\n", sm.round);
             }
             if (pi_bean_ready) {
-                //printf("[SM] CAMERA_BEAN: got bean=%c (%d/3)\r\n",pi_bean_code, sm.bean_count + 1);
-                sm.bean_count++;
-                if (sm.bean_count >= 3) {
-                 //   printf("[SM] CAMERA_BEAN: all 3 beans done\r\n");
-                    sm.current_state = SM_IDLE;
-                    sm.state_entered = 1;
-                } else {
-                    SM_EnterState(SM_CAMERA_BEAN, 10000);
-                }
+                // 根据豆子码设置卸货目的地
+                Action_SetDropDest(sm.round, pi_bean_code);
+             //   printf("[SM] CAMERA_BEAN: got bean=%c, drop set\r\n", pi_bean_code);
+                SM_EnterState(SM_UPDOWN_PICK, 20000);
             }
             SM_CheckTimeout(); break;
 
@@ -375,9 +328,8 @@ const char* SM_StateName(SM_State s) {
         case SM_CLAW_RELEASE: return "CLAW_RELEASE";
         case SM_DONE: return "DONE";
         case SM_ERROR: return "ERROR";
-        case SM_CAMERA_BOX:  return "CAMERA_BOX";
-        case SM_CHASSIS_SIM: return "CHASSIS_SIM";
-        case SM_CAMERA_BEAN: return "CAMERA_BEAN";
+        case SM_CAMERA_BOX_ORDER: return "CAMERA_BOX_ORDER";
+        case SM_CAMERA_BEAN:      return "CAMERA_BEAN";
         default: return "?";
     }
 }
