@@ -114,9 +114,12 @@ void CanTransmit_DJI_1234(CAN_HandleTypeDef *hcanx, int16_t cm1_iq, int16_t cm2_
     TxData[5] = (uint8_t)cm3_iq;
     TxData[6] = (uint8_t)(cm4_iq >> 8);
     TxData[7] = (uint8_t)cm4_iq;
-    while (HAL_CAN_GetTxMailboxesFreeLevel(hcanx) == 0);
-    if (HAL_CAN_AddTxMessage(hcanx, &TxMessage, TxData, &TxMailbox) != HAL_OK) {
-        Error_Handler(); // 如果CAN信息发送失败则进入死循环
+    uint32_t tx_timeout = HAL_GetTick() + 5;
+    while (HAL_CAN_GetTxMailboxesFreeLevel(hcanx) == 0) {
+        if ((int32_t)(HAL_GetTick() - tx_timeout) > 0) break;
+    }
+    if (HAL_CAN_GetTxMailboxesFreeLevel(hcanx) > 0) {
+        HAL_CAN_AddTxMessage(hcanx, &TxMessage, TxData, &TxMailbox);
     }
 }
 
@@ -139,9 +142,12 @@ void CanTransmit_DJI_5678(CAN_HandleTypeDef *hcanx, int16_t cm5_iq, int16_t cm6_
     TxData[6] = (uint8_t)(cm8_iq >> 8);
     TxData[7] = (uint8_t)cm8_iq;
 
-    while (HAL_CAN_GetTxMailboxesFreeLevel(hcanx) == 0);
-    if (HAL_CAN_AddTxMessage(hcanx, &TxMessage, TxData, &TxMailbox) != HAL_OK) {
-        Error_Handler(); // 如果CAN信息发送失败则进入死循环
+    uint32_t tx_timeout = HAL_GetTick() + 5;
+    while (HAL_CAN_GetTxMailboxesFreeLevel(hcanx) == 0) {
+        if ((int32_t)(HAL_GetTick() - tx_timeout) > 0) break;
+    }
+    if (HAL_CAN_GetTxMailboxesFreeLevel(hcanx) > 0) {
+        HAL_CAN_AddTxMessage(hcanx, &TxMessage, TxData, &TxMailbox);
     }
 }
 

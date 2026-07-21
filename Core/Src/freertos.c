@@ -126,8 +126,8 @@ void StartDefaultTask(void *argument)
   DJI_Start();
   FT_Start();
   SM_Start();
-  //  osDelay(3000);
-  //  SM_StartMission(&mission);
+   osDelay(3000);
+   SM_StartMission(&mission);
   
 
 

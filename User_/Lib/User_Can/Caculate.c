@@ -153,6 +153,9 @@ void positionServo_chassis(float ref, DJI_t *motor)
         last_chassis_ref = ref;
         start_enc = motor->AxisData.AxisAngle_inDegree;
         motor->posPID.integral = 0;
+        motor->speedPID.output  = 0;
+        motor->speedPID.error[0] = 0;
+        motor->speedPID.error[1] = 0;
     }
     float dist_start = fabs(motor->AxisData.AxisAngle_inDegree - start_enc) * CHASSIS_MM_PER_DEG;
     float error = fabs(fused_pos - ref);
@@ -168,8 +171,9 @@ void positionServo_chassis(float ref, DJI_t *motor)
     /* ---- 减速斜坡 ---- */
     float decel_limit = CHASSIS_MAX;
     if (error < 750.0f) {
-        decel_limit = CHASSIS_MAX * (error / 750.0f);
-        if (decel_limit < 500.0f) decel_limit = 500.0f;
+        float t = error / 750.0f;
+        float s = t * t * (3.0f - 2.0f * t);  // smoothstep S曲线
+        decel_limit = 1000.0f + (CHASSIS_MAX - 1000.0f) * s;
     }
 
     motor->posPID.outputMax = (accel_limit < decel_limit) ? accel_limit : decel_limit;

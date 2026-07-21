@@ -84,6 +84,36 @@ void StateMachine_Function(void *argument)
         case SM_IDLE:
             break;
 
+        /*视觉测试状态*/
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         /* 1. 升降升起 */
         case SM_UPDOWN_LIFT:
             if (sm.state_entered) {

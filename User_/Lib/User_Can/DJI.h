@@ -1,7 +1,7 @@
 #ifndef DJI_H
 #define DJI_H
 
-#define CHASSIS_MAX         6000.0f
+#define CHASSIS_MAX         7000.0f
 #define CHASSIS_MM_PER_DEG  0.83f   // 底盘编码器→毫米系数 (ΔL/ΔE = 828/992)
 #define BEAM_MAX            5000.0f // 横梁最大速度
 #define BEAM_MM_PER_DEG     0.83f   // 横梁编码器→毫米系数 (需实测)
