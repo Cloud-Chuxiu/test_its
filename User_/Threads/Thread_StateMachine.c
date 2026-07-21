@@ -95,9 +95,12 @@ void StateMachine_Function(void *argument)
             if (!sm.trig2 && (HAL_GetTick() - sm.state_entry_tick) > 200) {
                 *pBeam_distance = sm.lift_stage
                     ? sm.beam_start_drop[r] : sm.beam_start_pick[r];
-                *pChassis_distance = sm.pick_x[r];
                 sm.trig2 = 1;
+                *pChassis_distance = sm.pick_x[r];
+                
             }
+
+
             if (Updown_Done()) {
                 if (sm.lift_stage)
                     SM_EnterState(SM_CHASSIS_DROP, 20000);
@@ -115,7 +118,8 @@ void StateMachine_Function(void *argument)
             sm.target_x = sm.pick_x[r];
             if (!sm.trig1) { *pChassis_distance = sm.pick_x[r]; sm.trig1 = 1; }
             if (!sm.trig2 && fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap1[r]) < 200)
-                { *pBeam_distance = sm.beam_pick[r]; sm.trig2 = 1; }
+                { *pBeam_distance = sm.beam_pick[r]; sm.trig2 = 1; 
+                    }
             if (Chassis_Done()) SM_EnterState(SM_BEAM_PICK, 30000);
             SM_CheckTimeout(); break;
 
@@ -131,11 +135,11 @@ void StateMachine_Function(void *argument)
         
         /*3.5. 豆子识别*/    
 
-        case SM_CAMERA_GOODS:
-            if(sm.state_entered){
-                sm.state_entered = 0;
+        // case SM_CAMERA_GOODS:
+        //     if(sm.state_entered){
+        //         sm.state_entered = 0;
 
-            }
+        //     }
 
         
 
