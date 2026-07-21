@@ -131,12 +131,14 @@ void StartDefaultTask(void *argument)
   
 
 
-    // osDelay(1000);
+     osDelay(1000);
     // *pBeam_distance = 1790;
-     *pChassis_distance = 50;
+  
   for(;;)
-  {    
-    osDelay(100);
+  {
+    
+  //*pChassis_distance = 50;
+    osDelay(40);
   }
 }
 /* Private application code --------------------------------------------------*/

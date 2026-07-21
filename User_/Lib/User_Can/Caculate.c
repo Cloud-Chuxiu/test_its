@@ -126,7 +126,6 @@ void positionServo_Beam(float ref, DJI_t *motor)
 }
 
 extern volatile uint32_t usart1_frame_cnt;
-
 //底盘位置伺服函数（LIDAR+编码器融合反馈，位置式PID）
 void positionServo_chassis(float ref, DJI_t *motor)
 {

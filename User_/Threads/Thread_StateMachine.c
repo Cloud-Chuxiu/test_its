@@ -49,6 +49,11 @@ static uint8_t Claw_Done(void) {
 static uint8_t Claw_release_Done(void) {
     return (HAL_GetTick() - sm.state_entry_tick) > 1000;
 }
+static uint8_t Camera_Done(void){
+    return 0;
+}
+
+
 
 /* ---------- 状态跳转 ---------- */
 
@@ -87,12 +92,11 @@ void StateMachine_Function(void *argument)
             }
             sm.target_z = sm.up_lift;
             if (!sm.trig1) { *pUpdown_distance = sm.up_lift; sm.trig1 = 1; }
-            if (!sm.trig2 && (HAL_GetTick() - sm.state_entry_tick) > 200) 
-            {
+            if (!sm.trig2 && (HAL_GetTick() - sm.state_entry_tick) > 200) {
                 *pBeam_distance = sm.lift_stage
                     ? sm.beam_start_drop[r] : sm.beam_start_pick[r];
                 *pChassis_distance = sm.pick_x[r];
-                    sm.trig2 = 1;
+                sm.trig2 = 1;
             }
             if (Updown_Done()) {
                 if (sm.lift_stage)
@@ -124,6 +128,23 @@ void StateMachine_Function(void *argument)
             }
             if (Beam_Done()) SM_EnterState(SM_UPDOWN_PICK, 20000);
             SM_CheckTimeout(); break;
+        
+        /*3.5. 豆子识别*/    
+
+        case SM_CAMERA_GOODS:
+            if(sm.state_entered){
+                sm.state_entered = 0;
+
+            }
+
+        
+
+
+
+
+
+
+
 
         /* 4. 升降下降取货 */
         case SM_UPDOWN_PICK:
