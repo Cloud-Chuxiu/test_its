@@ -19,6 +19,7 @@ StateMachine_t sm = {
     .claw_release    = 0,
     .round           = 0,
     .lift_stage      = 0,
+    .bean_count      = 0,
     .target_x        = 0,
     .target_y        = 0,
     .target_z        = 0,
@@ -74,7 +75,7 @@ static void SM_CheckTimeout(void) {
 
 void StateMachine_Function(void *argument)
 {
-    printf("[SM] ready\r\n");
+  //  printf("[SM] ready\r\n");
     osDelay(1000);
 
     for (;;) {
@@ -278,6 +279,56 @@ void StateMachine_Function(void *argument)
             }
             break;
 
+        /* ========== 视觉联调测试 ========== */
+
+        /* 状态1: 数字识别 —— 等待树莓派发送 D12345 */
+        case SM_CAMERA_BOX:
+            if (sm.state_entered) {
+                sm.state_entered = 0;
+                pi_digit_ready = 0;
+                //printf("[SM] CAMERA_BOX: waiting for digits...\r\n");
+            }
+            if (pi_digit_ready) {
+                HAL_UART_Transmit(&huart6, (uint8_t*)"OK\n", 3, 100);
+               // printf("[SM] CAMERA_BOX: got [%s] -> sent OK\r\n", pi_digit_str);
+                SM_EnterState(SM_CHASSIS_SIM, 10000);
+            }
+            SM_CheckTimeout(); break;
+
+        /* 状态2: 底盘模拟运行 */
+        case SM_CHASSIS_SIM:
+            if (sm.state_entered) {
+                sm.state_entered = 0;
+                sm.bean_count = 0;
+                //printf("[SM] CHASSIS_SIM: chassis moving (1000ms)...\r\n");
+            }
+            if ((HAL_GetTick() - sm.state_entry_tick) > 1000) {
+              //  printf("[SM] CHASSIS_SIM: done\r\n");
+                SM_EnterState(SM_CAMERA_BEAN, 10000);
+            }
+            break;
+
+        /* 状态3: 豆子识别 —— 发 GO\n，等待豆子码，重复3次 */
+        case SM_CAMERA_BEAN:
+            if (sm.state_entered) {
+                sm.state_entered = 0;
+                pi_bean_ready = 0;
+                HAL_UART_Transmit(&huart6, (uint8_t*)"GO\n", 3, 100);
+                //printf("[SM] CAMERA_BEAN: sent GO (%d/3)\r\n", sm.bean_count + 1);
+            }
+            if (pi_bean_ready) {
+                //printf("[SM] CAMERA_BEAN: got bean=%c (%d/3)\r\n",pi_bean_code, sm.bean_count + 1);
+                sm.bean_count++;
+                if (sm.bean_count >= 3) {
+                 //   printf("[SM] CAMERA_BEAN: all 3 beans done\r\n");
+                    sm.current_state = SM_IDLE;
+                    sm.state_entered = 1;
+                } else {
+                    SM_EnterState(SM_CAMERA_BEAN, 10000);
+                }
+            }
+            SM_CheckTimeout(); break;
+
         default: break;
         }
 
@@ -324,6 +375,9 @@ const char* SM_StateName(SM_State s) {
         case SM_CLAW_RELEASE: return "CLAW_RELEASE";
         case SM_DONE: return "DONE";
         case SM_ERROR: return "ERROR";
+        case SM_CAMERA_BOX:  return "CAMERA_BOX";
+        case SM_CHASSIS_SIM: return "CHASSIS_SIM";
+        case SM_CAMERA_BEAN: return "CAMERA_BEAN";
         default: return "?";
     }
 }
