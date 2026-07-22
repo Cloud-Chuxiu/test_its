@@ -170,8 +170,8 @@ void positionServo_chassis(float ref, DJI_t *motor)
 
     /* ---- 减速斜坡 ---- */
     float decel_limit = CHASSIS_MAX;
-    if (error < 750.0f) {
-        float t = error / 750.0f;
+    if (error < 800.0f) {
+        float t = error / 800.0f;
         float s = t * t * (3.0f - 2.0f * t);  // smoothstep S曲线
         decel_limit = 1000.0f + (CHASSIS_MAX - 1000.0f) * s;
     }

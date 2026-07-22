@@ -30,13 +30,13 @@ void DJI_Function(void *argument)
         hDJI[0].speedPID.output,   // m0: 底盘
         -hDJI[0].speedPID.output,  // m1: 底盘反向跟随
         hDJI[2].speedPID.output,   // m2: 横梁
-        hDJI[3].speedPID.output);  // m3
+        0);  // m3
 
     CanTransmit_DJI_5678(&hcan2,
-        hDJI[4].speedPID.output,   // m4
+        0,   // m4
         hDJI[5].speedPID.output,   // m5: 升降
-        hDJI[6].speedPID.output,   // m6
-        hDJI[7].speedPID.output);  // m7
+        0,   // m6
+        0);  // m7
 
     osDelay(1);
   }

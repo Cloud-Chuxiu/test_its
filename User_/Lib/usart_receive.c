@@ -118,9 +118,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
                     strncpy(pi_digit_str, pi_line, sizeof(pi_digit_str) - 1);
                     pi_digit_str[sizeof(pi_digit_str) - 1] = '\0';
                     pi_digit_ready = 1;
-                } else if (pi_line[0] >= '0' && pi_line[0] <= '9') {
+                } else if (pi_line[0] = 'B') {
                     // 豆子码: 0/1/2/3
-                    pi_bean_code = pi_line[0];
+                    pi_bean_code = pi_line[1];
                     pi_bean_ready = 1;
                 }
                 pi_idx = 0;
@@ -144,28 +144,28 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 
 /*************************树莓派数据解码**********************************/
-uint16_t Upper_Target_Decode()
-{
-    static union {
-        uint8_t data[20];
-        float weight_state[5];
-    } state;
-    uint16_t success_cnt=0;
+// uint16_t Upper_Target_Decode()
+// {
+//     static union {
+//         uint8_t data[20];
+//         float weight_state[5];
+//     } state;
+//     uint16_t success_cnt=0;
 
-    for (uint16_t i = 0; i < 3000;i++)
+//     for (uint16_t i = 0; i < 3000;i++)
 
-        if ((receive_buffer[0] == 0xFF) && (receive_buffer[1] == 0xFE) && (receive_buffer[22] == 0xFE) && (receive_buffer[23] == 0xFF)) {
-            for (int i = 0; i < 20; i++) {
-                state.data[i] = receive_buffer[i + 2];
-            }
+//         if ((receive_buffer[0] == 0xFF) && (receive_buffer[1] == 0xFE) && (receive_buffer[22] == 0xFE) && (receive_buffer[23] == 0xFF)) {
+//             for (int i = 0; i < 20; i++) {
+//                 state.data[i] = receive_buffer[i + 2];
+//             }
 
-            for (int t = 0; t < 5; t++) {
-                weight_placement[t] = state.weight_state[t];
-            }
-            success_cnt = 1;
-        }
-    return success_cnt;
-}
+//             for (int t = 0; t < 5; t++) {
+//                 weight_placement[t] = state.weight_state[t];
+//             }
+//             success_cnt = 1;
+//         }
+//     return success_cnt;
+// }
 
 //另一个版本的解码(int类型)
 // void Upper_Target_Decode()

@@ -116,7 +116,7 @@ void StateMachine_Function(void *argument)
             }
             sm.target_x = sm.pick_x[r];
             if (!sm.trig1) { *pChassis_distance = sm.pick_x[r]; sm.trig1 = 1; }
-            if (!sm.trig2 && fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap1[r]) < 200)
+            if (!sm.trig2 && fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap1[r]) < 300)
                 { *pBeam_distance = sm.beam_pick[r]; sm.trig2 = 1; 
                     }
             if (Chassis_Done()) SM_EnterState(SM_BEAM_PICK, 30000);
@@ -162,9 +162,10 @@ void StateMachine_Function(void *argument)
             }
             sm.target_x = sm.drop_x[r];
             if (!sm.trig1) { *pChassis_distance = sm.drop_x[r]; sm.trig1 = 1; }
-            if (!sm.trig2 && fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap1[r]) < 100)
+
+            if (!sm.trig2 && fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap1[r]) < 300)
                 { *pBeam_distance = sm.beam_gap[r]; }
-            if (fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap2[r]) < 100)
+            if (fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap2[r]) < 300)
             {   
                 *pBeam_distance = sm.beam_drop[r];
                 if(sm.beam_drop[r] == 50 || sm.beam_drop[r] == 1790)
@@ -210,8 +211,6 @@ void StateMachine_Function(void *argument)
                 sm.state_entered = 0;
                 *pFT_phy = 2600;
             }
-            
-
             sm.round++;
             if (sm.round < SM_ROUNDS) {
                 sm.lift_stage = 0;
@@ -237,14 +236,14 @@ void StateMachine_Function(void *argument)
             if (sm.state_entered) {
                 sm.state_entered = 0;
                 pi_digit_ready = 0;
-               // printf("[SM] BOX_ORDER: waiting for box order...\r\n");
+                printf("[SM] BOX_ORDER: waiting for box order...\r\n");
             }
             if (pi_digit_ready && pi_digit_str[0] == 'D' && strlen(pi_digit_str) >= 6) {
                 // 存储箱子顺序 如 "D23451" → "23451"
                 strncpy(sm.box_order, pi_digit_str + 1, 5);
                 sm.box_order[5] = '\0';
                 HAL_UART_Transmit(&huart6, (uint8_t*)"OK\n", 3, 100);
-             //   printf("[SM] BOX_ORDER: got [%s] -> sent OK\r\n", sm.box_order);
+                printf("[SM] BOX_ORDER: got [%s] -> sent OK\r\n", sm.box_order);
                 SM_EnterState(SM_UPDOWN_LIFT, 20000);
             }
             SM_CheckTimeout(); break;
@@ -255,12 +254,12 @@ void StateMachine_Function(void *argument)
                 sm.state_entered = 0;
                 pi_bean_ready = 0;
                 HAL_UART_Transmit(&huart6, (uint8_t*)"GO\n", 3, 100);
-             //   printf("[SM] CAMERA_BEAN: sent GO (round %d)\r\n", sm.round);
+                printf("[SM] CAMERA_BEAN: sent GO (round %d)\r\n", sm.round);
             }
             if (pi_bean_ready) {
                 // 根据豆子码设置卸货目的地
                 Action_SetDropDest(sm.round, pi_bean_code);
-             //   printf("[SM] CAMERA_BEAN: got bean=%c, drop set\r\n", pi_bean_code);
+                printf("[SM] CAMERA_BEAN: got bean=%c, drop set\r\n", pi_bean_code);
                 SM_EnterState(SM_UPDOWN_PICK, 20000);
             }
             SM_CheckTimeout(); break;
@@ -268,7 +267,7 @@ void StateMachine_Function(void *argument)
         default: break;
         }
 
-        osDelay(20);
+        osDelay(10);
     }
 }
 
