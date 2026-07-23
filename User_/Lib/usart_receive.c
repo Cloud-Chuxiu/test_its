@@ -173,14 +173,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 void Pi_SendString(const char *str)
 {
     if (str == NULL) return;
-    // 暂禁 RXNE 中断，防止 HAL 状态冲突
-    __HAL_UART_DISABLE_IT(&huart6, UART_IT_RXNE);
+    // 直接写 DR 寄存器，不关 RXNE——TX 和 RX 走不同硬件通路，互不冲突
     while (*str) {
-        while (!(USART6->SR & USART_SR_TXE));  // 等待发送寄存器空
+        while (!(USART6->SR & USART_SR_TXE));
         USART6->DR = (uint8_t)(*str++);
     }
-    while (!(USART6->SR & USART_SR_TC));       // 等待发送完成
-    __HAL_UART_ENABLE_IT(&huart6, UART_IT_RXNE);
 }
 
 //另一个版本的解码(int类型)

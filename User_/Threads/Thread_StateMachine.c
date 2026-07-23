@@ -41,7 +41,7 @@ static uint8_t Beam_Done(void) {
         && (fabs(hDJI[2].AxisData.lidar_distance - sm.target_y) < 5.0f);
 }
 static uint8_t Updown_Done(void) {
-    return (hDJI[5].speedPID.output == 0)
+    return (hDJI[3].speedPID.output == 0)
         && (fabs(hDJI[3].AxisData.AxisAngle_inDegree - sm.target_z) < 3.0f);
 }
 static uint8_t Claw_Done(void) {
@@ -232,20 +232,28 @@ void StateMachine_Function(void *argument)
         case SM_CAMERA_BOX_ORDER:
             if (sm.state_entered) {
                 sm.state_entered = 0;
-                pi_digit_ready = 0;
-                printf("[SM] BOX_ORDER: waiting for box order...\r\n");
+                // 不清零 pi_digit_ready：树莓派可能已提前发来数据
+                printf("[SM] BOX_ORDER: waiting...\r\n");
+                // 立即检查是否已有暂存数据
+                if (pi_digit_ready && pi_digit_str[0] == 'D' && strlen(pi_digit_str) >= 6) {
+                    strncpy(sm.box_order, pi_digit_str + 1, 5);
+                    sm.box_order[5] = '\0';
+                    Pi_SendString("OK\n");
+                    printf("got [%s] -> OK\r\n", sm.box_order);
+                    SM_EnterState(SM_UPDOWN_LIFT, 20000);
+                    break;
+                }
             }
             if (pi_digit_ready && pi_digit_str[0] == 'D' && strlen(pi_digit_str) >= 6) {
-                // 存储箱子顺序 如 "D23451" → "23451"
                 strncpy(sm.box_order, pi_digit_str + 1, 5);
                 sm.box_order[5] = '\0';
                 Pi_SendString("OK\n");
-                printf("got [%s] -> sent OK\r\n", sm.box_order);
+                printf("got [%s] -> OK\r\n", sm.box_order);
                 SM_EnterState(SM_UPDOWN_LIFT, 20000);
             }
             SM_CheckTimeout(); break;
 
-        /* 豆子识别（抓取前，每轮执行） */
+        /* 豆子识别（抓取前，每轮执行）*/
         case SM_CAMERA_BEAN:
             if (sm.state_entered) {
                 sm.state_entered = 0;
@@ -264,7 +272,7 @@ void StateMachine_Function(void *argument)
         default: break;
         }
 
-        osDelay(10);
+        osDelay(5);
     }
 }
 
