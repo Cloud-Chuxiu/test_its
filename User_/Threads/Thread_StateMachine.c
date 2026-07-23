@@ -243,7 +243,7 @@ void StateMachine_Function(void *argument)
                 strncpy(sm.box_order, pi_digit_str + 1, 5);
                 sm.box_order[5] = '\0';
                 HAL_UART_Transmit(&huart6, (uint8_t*)"OK\n", 3, 100);
-                printf("[SM] BOX_ORDER: got [%s] -> sent OK\r\n", sm.box_order);
+                printf("got [%s] -> sent OK\r\n", sm.box_order);
                 SM_EnterState(SM_UPDOWN_LIFT, 20000);
             }
             SM_CheckTimeout(); break;
@@ -254,12 +254,12 @@ void StateMachine_Function(void *argument)
                 sm.state_entered = 0;
                 pi_bean_ready = 0;
                 HAL_UART_Transmit(&huart6, (uint8_t*)"GO\n", 3, 100);
-                printf("[SM] CAMERA_BEAN: sent GO (round %d)\r\n", sm.round);
+                printf("sent GO (round %d)\r\n", sm.round);
             }
             if (pi_bean_ready) {
                 // 根据豆子码设置卸货目的地
                 Action_SetDropDest(sm.round, pi_bean_code);
-                printf("[SM] CAMERA_BEAN: got bean=%c, drop set\r\n", pi_bean_code);
+                printf("got bean=%c, drop set\r\n", pi_bean_code);
                 SM_EnterState(SM_UPDOWN_PICK, 20000);
             }
             SM_CheckTimeout(); break;

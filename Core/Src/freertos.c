@@ -126,8 +126,8 @@ void StartDefaultTask(void *argument)
   DJI_Start();
   FT_Start();
   SM_Start();
-  //  osDelay(3000);
-  //  SM_StartMission(&mission);
+   osDelay(3000);
+   SM_StartMission(&mission);
     //SM_EnterState(SM_CAMERA_BOX,10000);
 
 
@@ -135,9 +135,8 @@ void StartDefaultTask(void *argument)
     //  *pUpdown_distance = 800;
     //  osDelay(100);
     //  *pBeam_distance = 1441;
-      osDelay(1000);
-      *pChassis_distance = 3550
-      ;
+      // osDelay(1000);
+      // *pChassis_distance = 1000;
   
   for(;;)
   {

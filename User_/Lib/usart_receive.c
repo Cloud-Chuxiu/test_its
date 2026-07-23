@@ -118,7 +118,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
                     strncpy(pi_digit_str, pi_line, sizeof(pi_digit_str) - 1);
                     pi_digit_str[sizeof(pi_digit_str) - 1] = '\0';
                     pi_digit_ready = 1;
-                } else if (pi_line[0] = 'B') {
+                } else if (pi_line[0] == 'B') {
                     // 豆子码: 0/1/2/3
                     pi_bean_code = pi_line[1];
                     pi_bean_ready = 1;
