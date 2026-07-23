@@ -42,14 +42,14 @@ static uint8_t Beam_Done(void) {
 }
 static uint8_t Updown_Done(void) {
     return (hDJI[5].speedPID.output == 0)
-        && (fabs(hDJI[5].AxisData.AxisAngle_inDegree - sm.target_z) < 3.0f);
+        && (fabs(hDJI[3].AxisData.AxisAngle_inDegree - sm.target_z) < 3.0f);
 }
 static uint8_t Claw_Done(void) {
-    return (HAL_GetTick() - sm.state_entry_tick) > 2000;
+    return (HAL_GetTick() - sm.state_entry_tick) > 1800;
 }
 
 static uint8_t Claw_release_Done(void) {
-    return (HAL_GetTick() - sm.state_entry_tick) > 1000;
+    return (HAL_GetTick() - sm.state_entry_tick) > 800;
 }
 
 
