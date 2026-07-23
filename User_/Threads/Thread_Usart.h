@@ -24,5 +24,6 @@ extern char pi_bean_code;
 void Usart_Start();
 void Usart_Function(void *argument);
 void Usart_start();
+void Pi_SendString(const char *str);
 
 #endif

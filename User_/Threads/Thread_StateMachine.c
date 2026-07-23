@@ -242,7 +242,7 @@ void StateMachine_Function(void *argument)
                 // 存储箱子顺序 如 "D23451" → "23451"
                 strncpy(sm.box_order, pi_digit_str + 1, 5);
                 sm.box_order[5] = '\0';
-                HAL_UART_Transmit(&huart6, (uint8_t*)"OK\n", 3, 100);
+                Pi_SendString("OK\n");
                 printf("got [%s] -> sent OK\r\n", sm.box_order);
                 SM_EnterState(SM_UPDOWN_LIFT, 20000);
             }
@@ -253,7 +253,7 @@ void StateMachine_Function(void *argument)
             if (sm.state_entered) {
                 sm.state_entered = 0;
                 pi_bean_ready = 0;
-                HAL_UART_Transmit(&huart6, (uint8_t*)"GO\n", 3, 100);
+                Pi_SendString("GO\n");
                 printf("sent GO (round %d)\r\n", sm.round);
             }
             if (pi_bean_ready) {

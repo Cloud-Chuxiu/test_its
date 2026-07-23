@@ -123,10 +123,12 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
                     pi_bean_code = pi_line[1];
                     pi_bean_ready = 1;
                 }
-                pi_idx = 0;
             }
+            pi_idx = 0;  // 无论是否有效行，换行后重置
         } else if (pi_idx < sizeof(pi_line) - 1) {
             pi_line[pi_idx++] = c;
+        } else {
+            pi_idx = 0;  // 溢出保护：丢弃脏数据并重置，防止永久卡死
         }
 
         HAL_UART_Receive_IT(&huart6, usart6_rx, 1);
@@ -166,6 +168,20 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 //         }
 //     return success_cnt;
 // }
+
+/*************************树莓派安全发送（不干扰RX中断）*************************/
+void Pi_SendString(const char *str)
+{
+    if (str == NULL) return;
+    // 暂禁 RXNE 中断，防止 HAL 状态冲突
+    __HAL_UART_DISABLE_IT(&huart6, UART_IT_RXNE);
+    while (*str) {
+        while (!(USART6->SR & USART_SR_TXE));  // 等待发送寄存器空
+        USART6->DR = (uint8_t)(*str++);
+    }
+    while (!(USART6->SR & USART_SR_TC));       // 等待发送完成
+    __HAL_UART_ENABLE_IT(&huart6, UART_IT_RXNE);
+}
 
 //另一个版本的解码(int类型)
 // void Upper_Target_Decode()
