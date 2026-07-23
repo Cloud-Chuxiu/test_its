@@ -110,7 +110,7 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim12); // ����ʱ��
   //����can������
   CANFilterInit(&hcan1);
-  CANFilterInit(&hcan2);
+ // CANFilterInit(&hcan2);
   for(int i = 0; i < 8;i++)
   {
     hDJI[i].motorType = M3508;

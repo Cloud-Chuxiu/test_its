@@ -23,20 +23,20 @@ void DJI_Function(void *argument)
       positionServo_Beam(Beam_distance, &hDJI[2]);
     }
     //positionServo(Beam_distance, &hDJI[2]);
-    positionServo(Updown_distance, &hDJI[5]);
+    positionServo(Updown_distance, &hDJI[3]);
 
     // ----- 统一CAN发送（避免竞态）-----
     CanTransmit_DJI_1234(&hcan1,
         hDJI[0].speedPID.output,   // m0: 底盘
         -hDJI[0].speedPID.output,  // m1: 底盘反向跟随
         hDJI[2].speedPID.output,   // m2: 横梁
-        0);  // m3
+        hDJI[3].speedPID.output);  // m3
 
-    CanTransmit_DJI_5678(&hcan2,
-        0,   // m4
-        hDJI[5].speedPID.output,   // m5: 升降
-        0,   // m6
-        0);  // m7
+    // CanTransmit_DJI_5678(&hcan2,
+    //     0,   // m4
+    //     0,   // m5: 升降
+    //     0,   // m6
+    //     0);  // m7
 
     osDelay(1);
   }

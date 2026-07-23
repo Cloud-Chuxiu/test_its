@@ -51,9 +51,6 @@ static uint8_t Claw_Done(void) {
 static uint8_t Claw_release_Done(void) {
     return (HAL_GetTick() - sm.state_entry_tick) > 1000;
 }
-static uint8_t Camera_Done(void){
-    return 0;
-}
 
 
 

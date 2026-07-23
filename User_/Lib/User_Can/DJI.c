@@ -29,7 +29,7 @@ void DJI_Init()
         hDJI[i].posPID.outputMax = 5000;
 	 }
 	 //升降结构的pid参数
-	 else if(i == 5)
+	 else if(i == 3)
 	 {
 		//speedPID
         hDJI[i].speedPID.KP = 12;
