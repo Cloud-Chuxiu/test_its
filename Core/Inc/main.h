@@ -57,6 +57,9 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define SWITCH_PIN_Pin GPIO_PIN_9
+#define SWITCH_PIN_GPIO_Port GPIOD
+#define SWITCH_PIN_EXTI_IRQn EXTI9_5_IRQn
 
 /* USER CODE BEGIN Private defines */
 

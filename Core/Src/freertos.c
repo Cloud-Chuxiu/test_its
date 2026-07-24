@@ -120,32 +120,20 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
-  //osDelay(3000);
-
   Usart_Start();
   DJI_Start();
   FT_Start();
   SM_Start();
   osDelay(3000);
   SM_StartMission(&mission);
-   
-  
-  //SM_EnterState(SM_CAMERA_BOX,10000);
-
-
-    //  osDelay(1000);
-    //  *pUpdown_distance = 800;
-    //  osDelay(100);
-    //  *pBeam_distance = 1441;
-      // osDelay(1000);
-      // *pChassis_distance = 500;
-  
+  /* Infinite loop */
   for(;;)
   {
-    
     osDelay(1000);
   }
+  /* USER CODE END StartDefaultTask */
 }
+
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
 

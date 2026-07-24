@@ -25,6 +25,7 @@ targets:
         - STM32F407xx
       incList:
         - Middlewares
+        - Middlewares/Third_Party/FreeRTOS/Source
       libList: []
     excludeList: []
     settings: {}
