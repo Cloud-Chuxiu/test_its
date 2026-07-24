@@ -45,7 +45,7 @@ static uint8_t Updown_Done(void) {
         && (fabs(hDJI[3].AxisData.AxisAngle_inDegree - sm.target_z) < 3.0f);
 }
 static uint8_t Claw_Done(void) {
-    return (HAL_GetTick() - sm.state_entry_tick) > 1800;
+    return (HAL_GetTick() - sm.state_entry_tick) > 1000;
 }
 
 static uint8_t Claw_release_Done(void) {
@@ -233,13 +233,13 @@ void StateMachine_Function(void *argument)
             if (sm.state_entered) {
                 sm.state_entered = 0;
                 // 不清零 pi_digit_ready：树莓派可能已提前发来数据
-                printf("[SM] BOX_ORDER: waiting...\r\n");
+                //printf("[SM] BOX_ORDER: waiting...\r\n");
                 // 立即检查是否已有暂存数据
                 if (pi_digit_ready && pi_digit_str[0] == 'D' && strlen(pi_digit_str) >= 6) {
                     strncpy(sm.box_order, pi_digit_str + 1, 5);
                     sm.box_order[5] = '\0';
                     Pi_SendString("OK\n");
-                    printf("got [%s] -> OK\r\n", sm.box_order);
+                  //  printf("got [%s] -> OK\r\n", sm.box_order);
                     SM_EnterState(SM_UPDOWN_LIFT, 20000);
                     break;
                 }
@@ -248,7 +248,7 @@ void StateMachine_Function(void *argument)
                 strncpy(sm.box_order, pi_digit_str + 1, 5);
                 sm.box_order[5] = '\0';
                 Pi_SendString("OK\n");
-                printf("got [%s] -> OK\r\n", sm.box_order);
+              //  printf("got [%s] -> OK\r\n", sm.box_order);
                 SM_EnterState(SM_UPDOWN_LIFT, 20000);
             }
             SM_CheckTimeout(); break;
@@ -259,12 +259,12 @@ void StateMachine_Function(void *argument)
                 sm.state_entered = 0;
                 pi_bean_ready = 0;
                 Pi_SendString("GO\n");
-                printf("sent GO (round %d)\r\n", sm.round);
+              //  printf("sent GO (round %d)\r\n", sm.round);
             }
             if (pi_bean_ready) {
                 // 根据豆子码设置卸货目的地
                 Action_SetDropDest(sm.round, pi_bean_code);
-                printf("got bean=%c, drop set\r\n", pi_bean_code);
+             //   printf("got bean=%c, drop set\r\n", pi_bean_code);
                 SM_EnterState(SM_UPDOWN_PICK, 20000);
             }
             SM_CheckTimeout(); break;

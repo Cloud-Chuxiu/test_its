@@ -14,7 +14,7 @@ void FT_Function(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    WritePosEx(&h_FT_STS[0],FT_phy,20,50);
+    WritePosEx(&h_FT_STS[0],FT_phy,70,70);
     osDelay(50);
   }
   /* USER CODE END ITS_Function */
