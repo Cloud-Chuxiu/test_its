@@ -12,11 +12,11 @@ const BoxPos_t boxes[NUM_BOXES] = {
 /* ===== 5 个卸货区坐标 ===== */
 const DropPos_t drops[NUM_DROPS] = {
     // {chassis_x, beam_y, updown_z}
-       {3530,      50,      650},   // B1
+       {3530,      50,      710},   // B1
        {3770,      526,     330},   // B2
        {3770,      911,     330},   // B3
        {3770,      1331,    330},   // B4 
-       {3530,      1790,    650},   // B5 
+       {3530,      1790,    710},   // B5 
 };
 
 Mission_t mission;
