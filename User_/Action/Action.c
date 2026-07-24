@@ -61,7 +61,7 @@ void StateMachine_Init(void)
 
     // ===== 通用参数 =====
     mission.up_lift      = 800;
-    mission.claw_release = 2000;
+    mission.claw_release = 2200;
 }
 
 /* 根据豆子码动态设置本轮卸货目的地，并重算关联的避障参数 */
