@@ -162,12 +162,10 @@ void StateMachine_Function(void *argument)
 
             if (!sm.trig2 && fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap1[r]) < 300)
                 { *pBeam_distance = sm.beam_gap[r]; }
-            if (fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap2[r]) < 400)
+
+            if (fabs(hDJI[0].AxisData.lidar_distance - sm.via_gap2[r]) < 300)
             {   
                 *pBeam_distance = sm.beam_drop[r];
-                if(sm.beam_drop[r] == 50 || sm.beam_drop[r] == 1790)
-                *pUpdown_distance = sm.up_drop[r];
-                
             }
                 
             if (Chassis_Done()) SM_EnterState(SM_BEAM_DROP, 30000);
@@ -179,6 +177,11 @@ void StateMachine_Function(void *argument)
                 sm.state_entered = 0;
                 sm.target_y = sm.beam_drop[r];
                 *pBeam_distance = sm.beam_drop[r];
+                if(fabs(hDJI[2].AxisData.lidar_distance - sm.target_y) < 150.0f)
+                {
+                    if(sm.beam_drop[r] == 50 || sm.beam_drop[r] == 1790)
+                    *pUpdown_distance = sm.up_drop[r];
+                }
 
             }
             if (Beam_Done()) SM_EnterState(SM_UPDOWN_DROP, 20000);

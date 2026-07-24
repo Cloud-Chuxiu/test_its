@@ -126,6 +126,9 @@ void StartDefaultTask(void *argument)
   SM_Start();
   osDelay(3000);
   SM_StartMission(&mission);
+
+  // osDelay(1000);
+  // *pChassis_distance = 100;
   /* Infinite loop */
   for(;;)
   {
