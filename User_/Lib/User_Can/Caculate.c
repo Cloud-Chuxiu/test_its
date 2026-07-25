@@ -162,19 +162,19 @@ void positionServo_chassis(float ref, DJI_t *motor)
 
     /* ---- 加速斜坡 ---- */
     float accel_limit = CHASSIS_MAX;
-    if (dist_start < 300.0f) {
-        float t = dist_start / 300.0f;
-        float s = t * t * (3.0f - 2.0f * t);  // smoothstep S曲线
-        accel_limit = 2500.0f + (CHASSIS_MAX - 2500.0f) * s;
-    }
+    // if (dist_start < 500.0f) {
+    //     float t = dist_start / 500.0f;
+    //     float s = t * t * (3.0f - 2.0f * t);  // smoothstep S曲线
+    //     accel_limit = 2000.0f + (CHASSIS_MAX - 2000.0f) * s;
+    // }
 
     /* ---- 减速斜坡 ---- */
     float decel_limit = CHASSIS_MAX;
-    if (error < 900.0f) {
-        float t = error / 900.0f;
-        float s = t * t * (3.0f - 2.0f * t);  // smoothstep S曲线
-        decel_limit = 1000.0f + (CHASSIS_MAX - 1000.0f) * s;
-    }
+    // if (error < 900.0f) {
+    //     float t = error / 900.0f;
+    //     float s = t * t * (3.0f - 2.0f * t);  // smoothstep S曲线
+    //     decel_limit = 1000.0f + (CHASSIS_MAX - 1000.0f) * s;
+    // }
 
     motor->posPID.outputMax = (accel_limit < decel_limit) ? accel_limit : decel_limit;
 

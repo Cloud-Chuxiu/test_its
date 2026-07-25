@@ -9,13 +9,40 @@ const BoxPos_t boxes[NUM_BOXES] = {
        {83,        430,     380,      1650},   // 箱3: 最右侧
 };
 
+
+
+/*黄豆位置*/
+const BoxPos_t boxes_1[NUM_BOXES] = {
+    // {chassis_x, beam_y, updown_z, claw_grab}
+       {83,        1422,    250,      1650},   // 箱1: 最左侧
+       {344,       911,     490,      1650},   // 箱2: 中间
+       {83,        430,     370,      1650},   // 箱3: 最右侧
+};
+
+/*绿豆位置*/
+const BoxPos_t boxes_2[NUM_BOXES] = {
+    // {chassis_x, beam_y, updown_z, claw_grab}
+       {83,        1422,    265,      1650},   // 箱1: 最左侧
+       {344,       911,     500,      1650},   // 箱2: 中间
+       {83,        430,     380,      1650},   // 箱3: 最右侧
+};
+
+/*白芸豆位置*/
+const BoxPos_t boxes_3[NUM_BOXES] = {
+    // {chassis_x, beam_y, updown_z, claw_grab}
+       {83,        1422,    265,      1650},   // 箱1: 最左侧
+       {344,       911,     500,      1650},   // 箱2: 中间
+       {83,        430,     380,      1650},   // 箱3: 最右侧
+};
+
+
 /* ===== 5 个卸货区坐标 ===== */
 const DropPos_t drops[NUM_DROPS] = {
     // {chassis_x, beam_y, updown_z}
        {3530,      50,      710},   // B1
-       {3755,      526,     330},   // B2
-       {3755,      911,     330},   // B3
-       {3755,      1331,    330},   // B4 
+       {3770,      526,     367},   // B2
+       {3770,      911,     367},   // B3
+       {3770,      1331,    367},   // B4 
        {3530,      1790,    710},   // B5 
 };
 
@@ -113,11 +140,28 @@ void Action_SetDropDest(int round, char bean_code)
             sm.beam_gap[1] = 526;
     }
 
+    //重算动态调整的updown_z
+    if(bean_code == '1')
+    {
+        sm.up_pick[round] = boxes_1[round].updown_z;
+    }
+    else if(bean_code == '2')
+    {
+        sm.up_pick[round] = boxes_2[round].updown_z;
+    }
+    else if(bean_code == '3')
+    {
+        sm.up_pick[round] = boxes_3[round].updown_z;
+    }
+
+    
     // ---- 卸货在障碍区之外 → 避障目的地设为卸货目的地 ----
     if (sm.beam_drop[round] < 526.0f && sm.beam_gap[round] == 526)
         sm.beam_gap[round] = sm.beam_drop[round];
     else if (sm.beam_drop[round] > 1331.0f && sm.beam_gap[round] == 1331)
         sm.beam_gap[round] = sm.beam_drop[round];
+
+
 }
 
 void SM_StartMission(const Mission_t *m)

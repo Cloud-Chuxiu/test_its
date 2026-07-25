@@ -95,6 +95,9 @@ void StateMachine_Function(void *argument)
                 *pBeam_distance = sm.lift_stage
                     ? sm.beam_start_drop[r] : sm.beam_start_pick[r];
                 sm.trig2 = 1;
+            }
+            if((HAL_GetTick() - sm.state_entry_tick) > 500)
+            {
                 *pChassis_distance = sm.pick_x[r];
             }
             if (Updown_Done()) {
