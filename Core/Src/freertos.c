@@ -126,6 +126,10 @@ void StartDefaultTask(void *argument)
   SM_Start();
   osDelay(3000);
   SM_StartMission(&mission);
+
+  // osDelay(1000);
+  // *pChassis_distance = 60;
+//  *pBeam_distance = 1200;
   /* Infinite loop */
   for(;;)
   {
