@@ -11,7 +11,7 @@ float *pUpdown_distance  = (float *)&Updown_distance;
 void DJI_Function(void *argument)
 {
 
-  osDelay(500);
+  osDelay(200);
   TickType_t xLastWakeTime = xTaskGetTickCount();
   for (;;) {
     // ----- 位置伺服计算（不发送CAN）-----

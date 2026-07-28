@@ -74,7 +74,7 @@ static void SM_CheckTimeout(void) {
 void StateMachine_Function(void *argument)
 {
   //  printf("[SM] ready\r\n");
-    osDelay(1000);
+    osDelay(400);
 
     for (;;) {
         uint8_t r = sm.round;

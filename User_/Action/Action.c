@@ -5,7 +5,7 @@
 const BoxPos_t boxes[NUM_BOXES] = {
     // {chassis_x, beam_y, updown_z, claw_grab}
        {83,        1422,    265,      1650},   // 箱1: 最左侧
-       {344,       920,     500,      1650},   // 箱2: 中间
+       {344,       911,     500,      1650},   // 箱2: 中间
        {83,        430,     380,      1650},   // 箱3: 最右侧
 };
 
@@ -158,8 +158,8 @@ void Action_SetDropDest(int round, char bean_code)
     // ---- 卸货在障碍区之外 → 避障目的地设为卸货目的地 ----
     if (sm.beam_drop[round] < 526.0f && sm.beam_gap[round] == 526)
         sm.beam_gap[round] = sm.beam_drop[round];
-    else if (sm.beam_drop[round] > 1331.0f && sm.beam_gap[round] == 1331)
-        sm.beam_gap[round] = sm.beam_drop[round];
+    // else if (sm.beam_drop[round] > 1331.0f && sm.beam_gap[round] == 1331)
+    //     sm.beam_gap[round] = sm.beam_drop[round];
 
 
 }
