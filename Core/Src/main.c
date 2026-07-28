@@ -105,7 +105,6 @@ int main(void)
   MX_CAN1_Init();
   MX_CAN2_Init();
   MX_USART6_UART_Init();
-  MX_UART4_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim8);  // ����ʱ��
   HAL_TIM_Base_Start_IT(&htim12); // ����ʱ��
@@ -119,8 +118,9 @@ int main(void)
   DJI_Init();
 
   StateMachine_Init();
-  
-  HAL_Delay(3000); //�ȴ���ģ���ʼ��?
+  Action_ButtonInit();
+
+  HAL_Delay(3000); //�ȴ���ģ���ʼ��?
   /* USER CODE END 2 */
 
   /* Init scheduler */

@@ -49,9 +49,11 @@ typedef struct {
 extern const BoxPos_t  boxes[NUM_BOXES];
 extern const DropPos_t drops[NUM_DROPS];
 extern Mission_t mission;
+extern volatile uint8_t button_pressed;
 
 void StateMachine_Init(void);
 void SM_StartMission(const Mission_t *m);
 void Action_SetDropDest(int round, char bean_code);
+void Action_ButtonInit(void);
 
 #endif

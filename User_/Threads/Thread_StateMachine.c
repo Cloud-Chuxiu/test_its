@@ -235,6 +235,18 @@ void StateMachine_Function(void *argument)
 
         /* ========== 视觉融合 ========== */
 
+        /* 等待按键启动 */
+        case SM_WAIT_BUTTON:
+            if (sm.state_entered) {
+                sm.state_entered = 0;
+                button_pressed = 0;
+            }
+            if (button_pressed) {
+                Pi_SendString("START\n");
+                SM_EnterState(SM_CAMERA_BOX_ORDER, 50000);
+            }
+            break;
+
         /* 箱子顺序识别（赛程最开头，只执行一次） */
         case SM_CAMERA_BOX_ORDER:
             if (sm.state_entered) {
@@ -322,6 +334,7 @@ const char* SM_StateName(SM_State s) {
         case SM_CLAW_RELEASE: return "CLAW_RELEASE";
         case SM_DONE: return "DONE";
         case SM_ERROR: return "ERROR";
+        case SM_WAIT_BUTTON:      return "WAIT_BUTTON";
         case SM_CAMERA_BOX_ORDER: return "CAMERA_BOX_ORDER";
         case SM_CAMERA_BEAN:      return "CAMERA_BEAN";
         default: return "?";

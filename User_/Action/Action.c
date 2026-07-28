@@ -1,5 +1,21 @@
 #include "Action.h"
 #include "Thread_StateMachine.h"
+#include "main.h"
+
+volatile uint8_t button_pressed = 0;
+
+void Action_ButtonInit(void)
+{
+    HAL_NVIC_SetPriority(EXTI0_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    if (GPIO_Pin == SWITCH_PIN_Pin) {
+        button_pressed = 1;
+    }
+}
 
 /* ===== 3 个货箱取货坐标 ===== */
 const BoxPos_t boxes[NUM_BOXES] = {
@@ -187,5 +203,5 @@ void SM_StartMission(const Mission_t *m)
     sm.round        = 0;
     sm.lift_stage   = 0;
 
-    SM_EnterState(SM_CAMERA_BOX_ORDER, 50000);
+    SM_EnterState(SM_WAIT_BUTTON, 60000);
 }
