@@ -121,15 +121,13 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   Usart_Start();
-  DJI_Start();
+  //DJI_Start();
   FT_Start();
   SM_Start();
   osDelay(1000);
   SM_StartMission(&mission);
 
-  // osDelay(1000);
-  // *pChassis_distance = 2000;
-//  *pBeam_distance = 1200;
+
   /* Infinite loop */
   for(;;)
   {

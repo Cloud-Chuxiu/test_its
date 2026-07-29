@@ -23,7 +23,10 @@ void DJI_Function(void *argument)
     {
       positionServo_Beam(Beam_distance, &hDJI[2]);
     }
-    positionServo(Updown_distance, &hDJI[3]);
+    if(Updown_distance != 0)
+    {
+      positionServo(Updown_distance, &hDJI[3]);
+    }
 
     // ----- 统一CAN发送（避免竞态）-----
     CanTransmit_DJI_1234(&hcan1,
