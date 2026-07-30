@@ -120,13 +120,18 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
+  // 等待按键
+  button_pressed = 0;
+  while (!button_pressed) {
+      osDelay(50);
+  }
+  Pi_SendString("START\n");
   Usart_Start();
-  //DJI_Start();
+  DJI_Start();
   FT_Start();
   SM_Start();
-  osDelay(1000);
+  osDelay(200);
   SM_StartMission(&mission);
-
 
   /* Infinite loop */
   for(;;)

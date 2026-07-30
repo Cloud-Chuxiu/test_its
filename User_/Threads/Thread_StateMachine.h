@@ -24,7 +24,6 @@ typedef enum {
     SM_CHASSIS_DROP, SM_BEAM_DROP, SM_UPDOWN_DROP, SM_CLAW_RELEASE,
     SM_DONE, SM_ERROR,
     // 视觉融合
-    SM_WAIT_BUTTON,       // 等待按键启动
     SM_CAMERA_BOX_ORDER,  // 箱子顺序识别（赛程最开头）
     SM_CAMERA_BEAN        // 豆子识别（抓取前）
 } SM_State;

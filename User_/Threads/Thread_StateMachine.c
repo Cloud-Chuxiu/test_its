@@ -74,7 +74,7 @@ static void SM_CheckTimeout(void) {
 void StateMachine_Function(void *argument)
 {
   //  printf("[SM] ready\r\n");
-    osDelay(400);
+    osDelay(250);
 
     for (;;) {
         uint8_t r = sm.round;
@@ -235,18 +235,6 @@ void StateMachine_Function(void *argument)
 
         /* ========== 视觉融合 ========== */
 
-        /* 等待按键启动 */
-        case SM_WAIT_BUTTON:
-            if (sm.state_entered) {
-                sm.state_entered = 0;
-                button_pressed = 0;
-            }
-            if (button_pressed) {
-                Pi_SendString("START\n");
-                SM_EnterState(SM_CAMERA_BOX_ORDER, 50000);
-            }
-            break;
-
         /* 箱子顺序识别（赛程最开头，只执行一次） */
         case SM_CAMERA_BOX_ORDER:
             if (sm.state_entered) {
@@ -260,7 +248,9 @@ void StateMachine_Function(void *argument)
                     Pi_SendString("OK\n");
                   //  printf("got [%s] -> OK\r\n", sm.box_order);
                     SM_EnterState(SM_UPDOWN_LIFT, 20000);
-                    break;
+                  //  SM_EnterState(SM_CAMERA_BEAN, 20000);
+                   
+                  break;
                 }
             }
             if (pi_digit_ready && pi_digit_str[0] == 'D' && strlen(pi_digit_str) >= 6) {
@@ -268,7 +258,10 @@ void StateMachine_Function(void *argument)
                 sm.box_order[5] = '\0';
                 Pi_SendString("OK\n");
               //  printf("got [%s] -> OK\r\n", sm.box_order);
-                SM_EnterState(SM_UPDOWN_LIFT, 20000);
+              SM_EnterState(SM_UPDOWN_LIFT, 20000);
+                
+            //  SM_EnterState(SM_CAMERA_BEAN, 20000);
+
             }
             SM_CheckTimeout(); break;
 
@@ -280,11 +273,14 @@ void StateMachine_Function(void *argument)
                 Pi_SendString("GO\n");
               //  printf("sent GO (round %d)\r\n", sm.round);
             }
-            if (pi_bean_ready) {
+            if (pi_bean_ready) 
+            {
                 // 根据豆子码设置卸货目的地
-                Action_SetDropDest(sm.round, pi_bean_code);
+            Action_SetDropDest(sm.round, pi_bean_code);
              //   printf("got bean=%c, drop set\r\n", pi_bean_code);
-                SM_EnterState(SM_UPDOWN_PICK, 20000);
+             
+            SM_EnterState(SM_UPDOWN_PICK, 20000);
+             //SM_EnterState(SM_CAMERA_BEAN, 20000);
             }
             SM_CheckTimeout(); break;
 
@@ -334,7 +330,6 @@ const char* SM_StateName(SM_State s) {
         case SM_CLAW_RELEASE: return "CLAW_RELEASE";
         case SM_DONE: return "DONE";
         case SM_ERROR: return "ERROR";
-        case SM_WAIT_BUTTON:      return "WAIT_BUTTON";
         case SM_CAMERA_BOX_ORDER: return "CAMERA_BOX_ORDER";
         case SM_CAMERA_BEAN:      return "CAMERA_BEAN";
         default: return "?";

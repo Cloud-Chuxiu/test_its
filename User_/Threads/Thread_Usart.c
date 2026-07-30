@@ -4,8 +4,7 @@
 void Usart_Function(void *argument)
 {
   /* USER CODE BEGIN Usart_Function */
-  osDelay(200);
-  //printf("u6ready\r\n");
+  osDelay(50);
   uint32_t tick = 0;
   HAL_UART_Receive_IT(&huart1, usart1_rx, 1);
   HAL_UART_Receive_IT(&huart3, usart3_rx, 1);

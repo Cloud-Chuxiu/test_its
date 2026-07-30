@@ -32,8 +32,7 @@ const BoxPos_t boxes_1[NUM_BOXES] = {
     // {chassis_x, beam_y, updown_z, claw_grab}
        {83,        1422,    245,      1650},   // 箱1: 最左侧
        {344,       911,     485,      1650},   // 箱2: 中间
-       {83,        430,     365
-        ,      1650},   // 箱3: 最右侧
+       {83,        430,     365,      1650},   // 箱3: 最右侧
 };
 
 /*绿豆位置*/
@@ -204,5 +203,5 @@ void SM_StartMission(const Mission_t *m)
     sm.round        = 0;
     sm.lift_stage   = 0;
 
-    SM_EnterState(SM_WAIT_BUTTON, 60000);
+    SM_EnterState(SM_CAMERA_BOX_ORDER, 50000);
 }
