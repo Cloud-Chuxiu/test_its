@@ -34,18 +34,18 @@ StateMachine_t sm = {
 
 static uint8_t Chassis_Done(void) {
     return (hDJI[0].posPID.output == 0)
-        && (fabs(hDJI[0].AxisData.lidar_distance - sm.target_x) < 7.0f);
+        && (fabs(hDJI[0].AxisData.lidar_distance - sm.target_x) < 10.0f);
 }
 static uint8_t Beam_Done(void) {
     return (hDJI[2].posPID.output == 0)
-        && (fabs(hDJI[2].AxisData.lidar_distance - sm.target_y) < 5.0f);
+        && (fabs(hDJI[2].AxisData.lidar_distance - sm.target_y) < 10.0f);
 }
 static uint8_t Updown_Done(void) {
     return (hDJI[3].speedPID.output == 0)
-        && (fabs(hDJI[3].AxisData.AxisAngle_inDegree - sm.target_z) < 3.0f);
+        && (fabs(hDJI[3].AxisData.AxisAngle_inDegree - sm.target_z) < 10.0f);
 }
 static uint8_t Claw_Done(void) {
-    return (HAL_GetTick() - sm.state_entry_tick) > 1200;
+    return (HAL_GetTick() - sm.state_entry_tick) > 900;
 }
 
 static uint8_t Claw_release_Done(void) {
@@ -79,8 +79,10 @@ void StateMachine_Function(void *argument)
     for (;;) {
         uint8_t r = sm.round;
         switch (sm.current_state) {
-
+       
         case SM_IDLE:
+         hDJI[0].speedPID.output = 0;
+        hDJI[2].speedPID.output = 0;
             break;
 
         /* 1. 升降升起 */
@@ -180,7 +182,7 @@ void StateMachine_Function(void *argument)
                 sm.state_entered = 0;
                 sm.target_y = sm.beam_drop[r];
                 *pBeam_distance = sm.beam_drop[r];
-                if(fabs(hDJI[2].AxisData.lidar_distance - sm.target_y) < 150.0f)
+                if(fabs(hDJI[2].AxisData.lidar_distance - sm.target_y) < 200.0f)
                 {
                     if(sm.beam_drop[r] == 50 || sm.beam_drop[r] == 1790)
                     *pUpdown_distance = sm.up_drop[r];
@@ -223,6 +225,8 @@ void StateMachine_Function(void *argument)
              //   printf("[SM] all 3 rounds complete!\r\n");
                 sm.round = 0;
                 sm.current_state = SM_IDLE;
+                *pChassis_distance = 0;
+                *pBeam_distance = 0;
             }
             break;
 

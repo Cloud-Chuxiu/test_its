@@ -120,7 +120,7 @@ void positionServo_Beam(float ref, DJI_t *motor)
     motor->speedPID.ref = motor->posPID.output;
     motor->speedPID.fdb = motor->FdbData.rpm;
     PID_Calc(&motor->speedPID);
-     if (error < 8.0f) {
+     if (error < 10.0f) {
         motor->posPID.output = 0;
     }
 }

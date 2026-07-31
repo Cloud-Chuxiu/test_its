@@ -20,7 +20,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 /* ===== 3 个货箱取货坐标 ===== */
 const BoxPos_t boxes[NUM_BOXES] = {
     // {chassis_x, beam_y, updown_z, claw_grab}
-       {83,        1422,    265,      1650},   // 箱1: 最左侧
+       {83,        1425,    265,      1650},   // 箱1: 最左侧
        {344,       924,     500,      1650},   // 箱2: 中间
        {83,        430,     380,      1650},   // 箱3: 最右侧
 };
